@@ -142,11 +142,15 @@ form.addEventListener('submit', async (e)=>{
   if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')){toast('Falta publicar o Apps Script','Cole a URL do Web App na variável APPS_SCRIPT_URL.');return}
   const btn = e.submitter; btn.disabled=true; btn.textContent='Enviando...';
   try{
-    const res = await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
-    const json = await res.json();
-    if(!json.ok) throw new Error(json.message || 'Erro ao enviar');
+    const protocoloLocal = 'CAD-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
+    await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({...data, protocoloLocal})
+    });
     localStorage.removeItem(STORAGE_KEY); updateCount();
-    toast('Solicitação enviada com sucesso','Protocolo: '+json.protocolo);
+    toast('Solicitação enviada com sucesso','Protocolo: '+protocoloLocal+'. Confira a planilha para confirmar o registro.');
     form.reset(); setType('Parceiro',false);
   }catch(err){
     saveDraft();
