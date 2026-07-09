@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Central de Cadastros | Parceiros, Produtos e Serviços</title>
+<style>
+:root{
+  --bg:#07111f;--bg2:#0b1b31;--card:#101f35;--card2:#132844;--line:#243a5c;
+  --text:#f7fafc;--muted:#a8b5c8;--primary:#36d399;--primary2:#22c55e;--danger:#fb7185;
+  --warning:#fbbf24;--blue:#60a5fa;--shadow:0 22px 60px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top left,#12345a 0,#07111f 42%,#050914 100%);color:var(--text);min-height:100vh}
+.header{padding:34px 22px 18px;max-width:1180px;margin:auto}.brand{display:flex;gap:14px;align-items:center}.logo{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--primary),#38bdf8);display:grid;place-items:center;font-weight:900;color:#06111f;box-shadow:0 12px 30px rgba(54,211,153,.25)}
+h1{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.04em}.subtitle{margin:8px 0 0;color:var(--muted);font-size:16px;line-height:1.5}.shell{max-width:1180px;margin:0 auto;padding:18px 22px 48px}.grid{display:grid;grid-template-columns:330px 1fr;gap:22px}.panel,.form{background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);border-radius:28px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}.panel{padding:22px;position:sticky;top:18px;height:max-content}.form{padding:24px}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(54,211,153,.35);background:rgba(54,211,153,.08);border-radius:999px;color:#bbf7d0;font-size:13px;font-weight:700}.steps{margin-top:22px;display:grid;gap:12px}.step{padding:15px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:.2s}.step:hover,.step.active{border-color:rgba(54,211,153,.55);background:rgba(54,211,153,.10);transform:translateY(-1px)}.step b{display:block;margin-bottom:4px}.step span{color:var(--muted);font-size:13px;line-height:1.35}.mini{margin-top:22px;padding:16px;border-radius:18px;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.18);color:#dbeafe;font-size:13px;line-height:1.5}.topbar{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:18px}.badge{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:var(--muted);font-size:12px}.progress{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:14px 0 22px}.progress i{display:block;height:100%;width:33%;background:linear-gradient(90deg,var(--primary),#38bdf8);transition:.25s}fieldset{border:0;margin:0 0 26px;padding:0}legend{font-size:18px;font-weight:900;margin-bottom:14px;letter-spacing:-.02em}.row{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.col-12{grid-column:span 12}.col-8{grid-column:span 8}.col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-3{grid-column:span 3}label{display:block;font-size:12px;color:#cbd5e1;font-weight:800;margin:0 0 7px;text-transform:uppercase;letter-spacing:.05em}input,select,textarea{width:100%;border:1px solid rgba(255,255,255,.13);background:rgba(5,12,24,.72);color:var(--text);border-radius:15px;padding:13px 14px;font:inherit;outline:none;transition:.2s}textarea{min-height:105px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:rgba(54,211,153,.7);box-shadow:0 0 0 4px rgba(54,211,153,.08)}.hidden{display:none!important}.actions{display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,.10);padding-top:18px}.btn{border:0;border-radius:16px;padding:13px 18px;font-weight:900;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:linear-gradient(135deg,var(--primary),#38bdf8);color:#06111f}.btn.ghost{background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.12)}.btn.danger{background:rgba(251,113,133,.12);color:#fecdd3;border:1px solid rgba(251,113,133,.22)}.toast{position:fixed;right:20px;bottom:20px;max-width:420px;padding:16px 18px;border-radius:18px;background:#06111f;border:1px solid rgba(54,211,153,.35);box-shadow:var(--shadow);display:none;z-index:99}.toast.show{display:block}.toast b{display:block;margin-bottom:4px}.req{color:#86efac}.offline{color:#fde68a}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:15px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}.stat b{font-size:24px;display:block}.stat span{font-size:12px;color:var(--muted)}.footer-note{color:var(--muted);font-size:12px;line-height:1.5;margin-top:12px}@media(max-width:900px){.grid{grid-template-columns:1fr}.panel{position:relative;top:0}.col-8,.col-6,.col-4,.col-3{grid-column:span 12}.topbar,.actions{flex-direction:column}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="brand"><div class="logo">CF</div><div><h1>Central de Cadastros</h1><p class="subtitle">Solicitação centralizada para cadastro de <b>Parceiros</b>, <b>Produtos</b> e <b>Serviços</b>, com envio automático para Google Sheets.</p></div></div>
+</header>
+<main class="shell">
+  <div class="grid">
+    <aside class="panel">
+      <span class="pill">● Portal Corporativo</span>
+      <div class="cards">
+        <div class="stat"><b id="countLocal">0</b><span>rascunhos locais</span></div>
+        <div class="stat"><b id="netStatus">ON</b><span>conexão</span></div>
+        <div class="stat"><b>3</b><span>tipos de cadastro</span></div>
+      </div>
+      <div class="steps">
+        <div class="step active" data-type="Parceiro"><b>Parceiro</b><span>Fornecedor, cliente, transportadora ou prestador.</span></div>
+        <div class="step" data-type="Produto"><b>Produto</b><span>Materiais, itens de compra, estoque e referências.</span></div>
+        <div class="step" data-type="Serviço"><b>Serviço</b><span>Serviços, retenções, CR, natureza e dados fiscais.</span></div>
+      </div>
+      <div class="mini"><b>Fluxo:</b><br>Colaborador preenche → planilha recebe → responsável cadastra no sistema → status e retorno ficam centralizados.</div>
+      <p class="footer-note">Planilha conectada: <b>Controle cadastro</b><br>ID: 1yOi0nIdYD701qygVNuc0FPzTFXvordAVlDPX26WqrM4</p>
+    </aside>
+    <section class="form">
+      <div class="topbar"><div><span class="badge" id="typeBadge">Cadastro de Parceiro</span><h2 id="formTitle">Nova solicitação</h2></div><span class="badge" id="saveInfo">Rascunho salvo automaticamente</span></div>
+      <div class="progress"><i id="progressBar"></i></div>
+      <form id="cadastroForm">
+        <input type="hidden" name="tipoCadastro" id="tipoCadastro" value="Parceiro">
+        <fieldset>
+          <legend>1. Dados do solicitante</legend>
+          <div class="row">
+            <div class="col-6"><label>Solicitante <span class="req">*</span></label><input required name="solicitante" placeholder="Nome completo"></div>
+            <div class="col-6"><label>E-mail solicitante <span class="req">*</span></label><input required type="email" name="emailSolicitante" placeholder="nome@empresa.com.br"></div>
+            <div class="col-4"><label>Departamento</label><input name="departamento" placeholder="Ex.: Suprimentos"></div>
+            <div class="col-4"><label>Prioridade</label><select name="prioridade"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Urgente</option></select></div>
+            <div class="col-4"><label>Gestor / responsável</label><input name="gestor" placeholder="Nome do gestor"></div>
+          </div>
+        </fieldset>
+        <fieldset id="secParceiro">
+          <legend>2. Dados do parceiro</legend>
+          <div class="row">
+            <div class="col-4"><label>Tipo Pessoa <span class="req">*</span></label><select name="tipoPessoa"><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div>
+            <div class="col-8"><label>Razão Social / Nome <span class="req">*</span></label><input name="razaoSocial" data-required-type="Parceiro" placeholder="Razão social ou nome completo"></div>
+            <div class="col-6"><label>Nome Fantasia</label><input name="nomeFantasia"></div>
+            <div class="col-3"><label>CNPJ / CPF</label><input name="cnpjCpf" placeholder="00.000.000/0000-00"></div>
+            <div class="col-3"><label>IE / RG</label><input name="inscricaoEstadual"></div>
+            <div class="col-4"><label>Contribuinte ICMS</label><select name="contribuinteIcms"><option>Sim</option><option>Não</option><option>Não se aplica</option></select></div>
+            <div class="col-4"><label>CEP</label><input name="cep" id="cep" placeholder="00000-000"></div>
+            <div class="col-4"><label>Telefone</label><input name="telefone"></div>
+            <div class="col-8"><label>Endereço</label><input name="endereco"></div>
+            <div class="col-4"><label>Número</label><input name="numero"></div>
+            <div class="col-4"><label>Bairro</label><input name="bairro"></div>
+            <div class="col-4"><label>Cidade</label><input name="cidade"></div>
+            <div class="col-4"><label>UF</label><input name="uf" maxlength="2"></div>
+            <div class="col-6"><label>E-mail parceiro</label><input type="email" name="emailParceiro"></div>
+            <div class="col-6"><label>Condição pagamento</label><input name="condicaoPagamento" placeholder="Ex.: 28 dias"></div>
+            <div class="col-3"><label>Banco</label><input name="banco"></div><div class="col-3"><label>Agência</label><input name="agencia"></div><div class="col-3"><label>Conta</label><input name="conta"></div><div class="col-3"><label>PIX</label><input name="pix"></div>
+          </div>
+        </fieldset>
+        <fieldset id="secProduto" class="hidden">
+          <legend>2. Dados do produto</legend>
+          <div class="row">
+            <div class="col-8"><label>Descrição Produto <span class="req">*</span></label><input name="descricaoProduto" data-required-type="Produto" placeholder="Ex.: Parafuso sextavado zincado"></div>
+            <div class="col-4"><label>Grupo Produto</label><input name="grupoProduto"></div>
+            <div class="col-3"><label>Unidade Padrão</label><select name="unidadePadrao"><option>UN</option><option>KG</option><option>CX</option><option>PC</option><option>M</option></select></div>
+            <div class="col-3"><label>Marca</label><input name="marca"></div><div class="col-3"><label>Referência Fornecedor</label><input name="referenciaFornecedor"></div><div class="col-3"><label>NCM</label><input name="ncm"></div>
+            <div class="col-3"><label>IPI %</label><input name="ipi" type="number" step="0.01"></div><div class="col-3"><label>Controla Estoque</label><select name="controlaEstoque"><option>Sim</option><option>Não</option></select></div><div class="col-3"><label>Estoque mínimo</label><input name="estoqueMinimo" type="number" step="0.01"></div><div class="col-3"><label>Estoque máximo</label><input name="estoqueMaximo" type="number" step="0.01"></div>
+            <div class="col-4"><label>Custo estimado</label><input name="custoEstimado" type="number" step="0.01"></div><div class="col-8"><label>Fornecedor sugerido</label><input name="fornecedorProduto"></div>
+          </div>
+        </fieldset>
+        <fieldset id="secServico" class="hidden">
+          <legend>2. Dados do serviço</legend>
+          <div class="row">
+            <div class="col-8"><label>Descrição Serviço <span class="req">*</span></label><input name="descricaoServico" data-required-type="Serviço" placeholder="Ex.: Manutenção preventiva de empilhadeira"></div>
+            <div class="col-4"><label>Grupo Serviço</label><input name="grupoServico"></div>
+            <div class="col-3"><label>Unidade</label><select name="unidadeServico"><option>SV</option><option>UN</option><option>H</option><option>MÊS</option></select></div>
+            <div class="col-3"><label>NCM / NBS</label><input name="ncmNbs"></div><div class="col-3"><label>Cód. Serviço Município</label><input name="codigoServicoMunicipio"></div><div class="col-3"><label>ISS %</label><input name="iss" type="number" step="0.01"></div>
+            <div class="col-4"><label>Retém impostos</label><select name="retemImpostos"><option>Sim</option><option>Não</option><option>Validar Fiscal</option></select></div>
+            <div class="col-8"><label>Fornecedor sugerido</label><input name="fornecedorServico"></div>
+            <div class="col-6"><label>Centro Resultado / CR</label><input name="centroResultado"></div><div class="col-6"><label>Conta contábil / Natureza</label><input name="natureza"></div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>3. Observações e anexos</legend>
+          <div class="row">
+            <div class="col-12"><label>Observações</label><textarea name="observacoes" placeholder="Informe detalhes importantes para evitar retrabalho no cadastro."></textarea></div>
+            <div class="col-12"><label>Link de anexo</label><input name="linkAnexo" placeholder="Cole aqui link de XML, PDF, cartão CNPJ, contrato, imagem ou pasta no Drive"></div>
+          </div>
+        </fieldset>
+        <div class="actions">
+          <button type="button" class="btn danger" id="limpar">Limpar rascunho</button>
+          <div><button type="button" class="btn ghost" id="salvar">Salvar rascunho</button> <button type="submit" class="btn primary">Enviar solicitação</button></div>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast"><b id="toastTitle"></b><span id="toastMsg"></span></div>
+<script>
+/*
+  IMPORTANTE:
+  1) Publique o Apps Script como Web App.
+  2) Cole a URL abaixo em APPS_SCRIPT_URL.
+  3) A planilha conectada no Apps Script já está configurada pelo ID:
+     1yOi0nIdYD701qygVNuc0FPzTFXvordAVlDPX26WqrM4
+*/
+const APPS_SCRIPT_URL = "COLE_AQUI_A_URL_DO_APPS_SCRIPT_PUBLICADO";
+const STORAGE_KEY = "central_cadastros_rascunho_v1";
+const form = document.getElementById('cadastroForm');
+const tipo = document.getElementById('tipoCadastro');
+const toast = (t,m)=>{document.getElementById('toastTitle').textContent=t;document.getElementById('toastMsg').textContent=m;document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),5200)};
+function serialize(){return Object.fromEntries(new FormData(form).entries())}
+function fill(data){Object.entries(data||{}).forEach(([k,v])=>{const el=form.elements[k]; if(el) el.value=v}); setType(data?.tipoCadastro||'Parceiro', false)}
+function saveDraft(){localStorage.setItem(STORAGE_KEY, JSON.stringify(serialize()));document.getElementById('saveInfo').textContent='Rascunho salvo às '+new Date().toLocaleTimeString('pt-BR');updateCount()}
+function updateCount(){document.getElementById('countLocal').textContent=localStorage.getItem(STORAGE_KEY)?1:0;document.getElementById('netStatus').textContent=navigator.onLine?'ON':'OFF';document.getElementById('netStatus').className=navigator.onLine?'':'offline'}
+function setType(value, save=true){tipo.value=value;document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',s.dataset.type===value));document.getElementById('secParceiro').classList.toggle('hidden',value!=='Parceiro');document.getElementById('secProduto').classList.toggle('hidden',value!=='Produto');document.getElementById('secServico').classList.toggle('hidden',value!=='Serviço');document.getElementById('typeBadge').textContent='Cadastro de '+value;document.getElementById('formTitle').textContent='Nova solicitação de '+value;document.getElementById('progressBar').style.width=value==='Parceiro'?'33%':value==='Produto'?'66%':'100%'; if(save) saveDraft()}
+document.querySelectorAll('.step').forEach(s=>s.onclick=()=>setType(s.dataset.type));
+form.addEventListener('input',()=>{clearTimeout(window.__draftTimer);window.__draftTimer=setTimeout(saveDraft,350)});
+document.getElementById('salvar').onclick=()=>{saveDraft();toast('Rascunho salvo','Você pode fechar e continuar depois neste navegador.')};
+document.getElementById('limpar').onclick=()=>{if(confirm('Deseja limpar o rascunho deste navegador?')){localStorage.removeItem(STORAGE_KEY);form.reset();setType('Parceiro',false);updateCount();toast('Rascunho removido','Os campos foram limpos.')}};
+window.addEventListener('online',updateCount);window.addEventListener('offline',updateCount);
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const data = serialize();
+  const required = form.querySelector(`[data-required-type="${data.tipoCadastro}"]`);
+  if(required && !required.value.trim()){required.focus();toast('Campo obrigatório','Preencha o campo principal do cadastro.');return}
+  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')){toast('Falta publicar o Apps Script','Cole a URL do Web App na variável APPS_SCRIPT_URL.');return}
+  const btn = e.submitter; btn.disabled=true; btn.textContent='Enviando...';
+  try{
+    const res = await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+    const json = await res.json();
+    if(!json.ok) throw new Error(json.message || 'Erro ao enviar');
+    localStorage.removeItem(STORAGE_KEY); updateCount();
+    toast('Solicitação enviada com sucesso','Protocolo: '+json.protocolo);
+    form.reset(); setType('Parceiro',false);
+  }catch(err){
+    saveDraft();
+    toast('Não foi possível enviar agora','Rascunho salvo. Detalhe: '+err.message);
+  }finally{btn.disabled=false; btn.textContent='Enviar solicitação'}
+});
+(async function(){
+  updateCount();
+  const draft = localStorage.getItem(STORAGE_KEY); if(draft) fill(JSON.parse(draft));
+  const cep = document.getElementById('cep');
+  cep?.addEventListener('blur', async ()=>{
+    const clean = cep.value.replace(/\D/g,''); if(clean.length!==8) return;
+    try{const r=await fetch('https://viacep.com.br/ws/'+clean+'/json/'); const j=await r.json(); if(!j.erro){form.elements.endereco.value=j.logradouro||'';form.elements.bairro.value=j.bairro||'';form.elements.cidade.value=j.localidade||'';form.elements.uf.value=j.uf||'';saveDraft();}}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
