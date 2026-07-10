@@ -134,28 +134,95 @@ form.addEventListener('input',()=>{clearTimeout(window.__draftTimer);window.__dr
 document.getElementById('salvar').onclick=()=>{saveDraft();toast('Rascunho salvo','Você pode fechar e continuar depois neste navegador.')};
 document.getElementById('limpar').onclick=()=>{if(confirm('Deseja limpar o rascunho deste navegador?')){localStorage.removeItem(STORAGE_KEY);form.reset();setType('Parceiro',false);updateCount();toast('Rascunho removido','Os campos foram limpos.')}};
 window.addEventListener('online',updateCount);window.addEventListener('offline',updateCount);
-form.addEventListener('submit', async (e)=>{
+form.addEventListener('submit', (e)=>{
   e.preventDefault();
+
   const data = serialize();
   const required = form.querySelector(`[data-required-type="${data.tipoCadastro}"]`);
-  if(required && !required.value.trim()){required.focus();toast('Campo obrigatório','Preencha o campo principal do cadastro.');return}
-  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')){toast('Falta publicar o Apps Script','Cole a URL do Web App na variável APPS_SCRIPT_URL.');return}
-  const btn = e.submitter; btn.disabled=true; btn.textContent='Enviando...';
-  try{
-    const protocoloLocal = 'CAD-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
-    await fetch(APPS_SCRIPT_URL,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({...data, protocoloLocal})
-    });
-    localStorage.removeItem(STORAGE_KEY); updateCount();
-    toast('Solicitação enviada com sucesso','Protocolo: '+protocoloLocal+'. Confira a planilha para confirmar o registro.');
-    form.reset(); setType('Parceiro',false);
-  }catch(err){
-    saveDraft();
-    toast('Não foi possível enviar agora','Rascunho salvo. Detalhe: '+err.message);
-  }finally{btn.disabled=false; btn.textContent='Enviar solicitação'}
+
+  if (required && !required.value.trim()) {
+    required.focus();
+    toast('Campo obrigatório','Preencha o campo principal do cadastro.');
+    return;
+  }
+
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
+    toast('Configuração incompleta','Informe a URL publicada do Apps Script.');
+    return;
+  }
+
+  const btn = e.submitter;
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const protocoloLocal =
+    'CAD-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
+
+  const payload = {
+    ...data,
+    protocoloLocal,
+    origem: window.location.href,
+    enviadoEm: new Date().toISOString()
+  };
+
+  // Envio por formulário oculto:
+  // evita bloqueios de CORS e garante que o Apps Script receba e.parameter.payload.
+  let iframe = document.getElementById('appsScriptTarget');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'appsScriptTarget';
+    iframe.name = 'appsScriptTarget';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  const postForm = document.createElement('form');
+  postForm.method = 'POST';
+  postForm.action = APPS_SCRIPT_URL;
+  postForm.target = 'appsScriptTarget';
+  postForm.style.display = 'none';
+
+  const payloadInput = document.createElement('input');
+  payloadInput.type = 'hidden';
+  payloadInput.name = 'payload';
+  payloadInput.value = JSON.stringify(payload);
+
+  postForm.appendChild(payloadInput);
+  document.body.appendChild(postForm);
+
+  let concluido = false;
+
+  const finalizar = () => {
+    if (concluido) return;
+    concluido = true;
+
+    localStorage.removeItem(STORAGE_KEY);
+    updateCount();
+
+    toast(
+      'Solicitação enviada',
+      'Protocolo de acompanhamento: ' + protocoloLocal +
+      '. O registro será incluído na aba correspondente.'
+    );
+
+    form.reset();
+    setType('Parceiro', false);
+    btn.disabled = false;
+    btn.textContent = 'Enviar solicitação';
+
+    setTimeout(() => postForm.remove(), 1000);
+  };
+
+  iframe.onload = () => {
+    // O conteúdo do iframe não pode ser lido por segurança,
+    // mas o carregamento confirma que o POST foi concluído.
+    setTimeout(finalizar, 400);
+  };
+
+  postForm.submit();
+
+  // Segurança para evitar botão travado caso o navegador não dispare onload.
+  setTimeout(finalizar, 5000);
 });
 (async function(){
   updateCount();
