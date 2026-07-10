@@ -13,7 +13,19 @@
 *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top left,#12345a 0,#07111f 42%,#050914 100%);color:var(--text);min-height:100vh}
 .header{padding:34px 22px 18px;max-width:1180px;margin:auto}.brand{display:flex;gap:14px;align-items:center}.logo{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--primary),#38bdf8);display:grid;place-items:center;font-weight:900;color:#06111f;box-shadow:0 12px 30px rgba(54,211,153,.25)}
 h1{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.04em}.subtitle{margin:8px 0 0;color:var(--muted);font-size:16px;line-height:1.5}.shell{max-width:1180px;margin:0 auto;padding:18px 22px 48px}.grid{display:grid;grid-template-columns:330px 1fr;gap:22px}.panel,.form{background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);border-radius:28px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}.panel{padding:22px;position:sticky;top:18px;height:max-content}.form{padding:24px}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(54,211,153,.35);background:rgba(54,211,153,.08);border-radius:999px;color:#bbf7d0;font-size:13px;font-weight:700}.steps{margin-top:22px;display:grid;gap:12px}.step{padding:15px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:.2s}.step:hover,.step.active{border-color:rgba(54,211,153,.55);background:rgba(54,211,153,.10);transform:translateY(-1px)}.step b{display:block;margin-bottom:4px}.step span{color:var(--muted);font-size:13px;line-height:1.35}.mini{margin-top:22px;padding:16px;border-radius:18px;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.18);color:#dbeafe;font-size:13px;line-height:1.5}.topbar{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:18px}.badge{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:var(--muted);font-size:12px}.progress{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:14px 0 22px}.progress i{display:block;height:100%;width:33%;background:linear-gradient(90deg,var(--primary),#38bdf8);transition:.25s}fieldset{border:0;margin:0 0 26px;padding:0}legend{font-size:18px;font-weight:900;margin-bottom:14px;letter-spacing:-.02em}.row{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.col-12{grid-column:span 12}.col-8{grid-column:span 8}.col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-3{grid-column:span 3}label{display:block;font-size:12px;color:#cbd5e1;font-weight:800;margin:0 0 7px;text-transform:uppercase;letter-spacing:.05em}input,select,textarea{width:100%;border:1px solid rgba(255,255,255,.13);background:rgba(5,12,24,.72);color:var(--text);border-radius:15px;padding:13px 14px;font:inherit;outline:none;transition:.2s}textarea{min-height:105px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:rgba(54,211,153,.7);box-shadow:0 0 0 4px rgba(54,211,153,.08)}.hidden{display:none!important}.actions{display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,.10);padding-top:18px}.btn{border:0;border-radius:16px;padding:13px 18px;font-weight:900;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:linear-gradient(135deg,var(--primary),#38bdf8);color:#06111f}.btn.ghost{background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.12)}.btn.danger{background:rgba(251,113,133,.12);color:#fecdd3;border:1px solid rgba(251,113,133,.22)}.toast{position:fixed;right:20px;bottom:20px;max-width:420px;padding:16px 18px;border-radius:18px;background:#06111f;border:1px solid rgba(54,211,153,.35);box-shadow:var(--shadow);display:none;z-index:99}.toast.show{display:block}.toast b{display:block;margin-bottom:4px}.req{color:#86efac}.offline{color:#fde68a}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:15px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}.stat b{font-size:24px;display:block}.stat span{font-size:12px;color:var(--muted)}.footer-note{color:var(--muted);font-size:12px;line-height:1.5;margin-top:12px}@media(max-width:900px){.grid{grid-template-columns:1fr}.panel{position:relative;top:0}.col-8,.col-6,.col-4,.col-3{grid-column:span 12}.topbar,.actions{flex-direction:column}.cards{grid-template-columns:1fr}}
+
+.history-panel{max-width:1180px;margin:22px auto 0;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);border-radius:28px;box-shadow:var(--shadow)}
+.history-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}.history-head h2{margin:0}.history-actions{display:flex;gap:10px;flex-wrap:wrap}
+.table-wrap{overflow:auto;border:1px solid rgba(255,255,255,.10);border-radius:18px}.history-table{width:100%;border-collapse:collapse;min-width:900px}.history-table th,.history-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;font-size:13px;vertical-align:top}.history-table th{position:sticky;top:0;background:#0b1b31;color:#dbeafe}.history-table td{color:#d8e2ef}.history-empty{padding:26px;text-align:center;color:var(--muted)}
+.history-note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5}.status-chip{display:inline-flex;padding:5px 9px;border-radius:999px;background:rgba(54,211,153,.12);border:1px solid rgba(54,211,153,.25);color:#bbf7d0;font-weight:800;font-size:11px}
+@media(max-width:900px){.history-head{align-items:flex-start;flex-direction:column}}
+
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+
 </head>
 <body>
 <header class="header">
@@ -26,7 +38,7 @@ h1{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.04em}.subtitle{margi
       <div class="cards">
         <div class="stat"><b id="countLocal">0</b><span>rascunhos locais</span></div>
         <div class="stat"><b id="netStatus">ON</b><span>conexão</span></div>
-        <div class="stat"><b>3</b><span>tipos de cadastro</span></div>
+        <div class="stat"><b id="countHistory">0</b><span>cadastros em 7 dias</span></div>
       </div>
       <div class="steps">
         <div class="step active" data-type="Parceiro"><b>Parceiro</b><span>Fornecedor, cliente, transportadora ou prestador.</span></div>
@@ -110,6 +122,41 @@ h1{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.04em}.subtitle{margi
     </section>
   </div>
 </main>
+
+<section class="history-panel">
+  <div class="history-head">
+    <div>
+      <span class="pill">Histórico local</span>
+      <h2>Cadastros realizados nos últimos 7 dias</h2>
+      <p class="subtitle">Os registros permanecem neste navegador por 7 dias e podem ser exportados para planilha ou PDF.</p>
+    </div>
+    <div class="history-actions">
+      <button type="button" class="btn ghost" id="exportarExcel">Gerar planilha</button>
+      <button type="button" class="btn ghost" id="exportarPdf">Gerar PDF</button>
+      <button type="button" class="btn danger" id="limparHistorico">Limpar histórico</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Protocolo</th>
+          <th>Tipo</th>
+          <th>Solicitante</th>
+          <th>Departamento</th>
+          <th>Cadastro solicitado</th>
+          <th>Prioridade</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+    <div class="history-empty hidden" id="historyEmpty">Nenhum cadastro armazenado neste navegador nos últimos 7 dias.</div>
+  </div>
+  <p class="history-note">O histórico local é exclusivo deste navegador e dispositivo. A formalização corporativa permanece registrada no Google Sheets. O resumo por e-mail é enviado pelo Apps Script a cada 3 dias.</p>
+</section>
+
 <div class="toast" id="toast"><b id="toastTitle"></b><span id="toastMsg"></span></div>
 <script>
 /*
@@ -121,12 +168,160 @@ h1{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.04em}.subtitle{margi
 */
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNZ5BQzuX_oDwL1YUEabQ_46edjJm-k6bu-v_IEzC2KTtgCNtNjowoCi9khn7O8vkfRg/exec";
 const STORAGE_KEY = "central_cadastros_rascunho_v1";
+const HISTORY_KEY = "central_cadastros_historico_v1";
+const HISTORY_DAYS = 7;
 const form = document.getElementById('cadastroForm');
 const tipo = document.getElementById('tipoCadastro');
 const toast = (t,m)=>{document.getElementById('toastTitle').textContent=t;document.getElementById('toastMsg').textContent=m;document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),5200)};
 function serialize(){return Object.fromEntries(new FormData(form).entries())}
 function fill(data){Object.entries(data||{}).forEach(([k,v])=>{const el=form.elements[k]; if(el) el.value=v}); setType(data?.tipoCadastro||'Parceiro', false)}
 function saveDraft(){localStorage.setItem(STORAGE_KEY, JSON.stringify(serialize()));document.getElementById('saveInfo').textContent='Rascunho salvo às '+new Date().toLocaleTimeString('pt-BR');updateCount()}
+
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  })[char]);
+}
+
+function getHistory(){
+  let records = [];
+  try{ records = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch(e){ records = []; }
+
+  const limit = Date.now() - (HISTORY_DAYS * 24 * 60 * 60 * 1000);
+  const valid = records.filter(item => {
+    const timestamp = new Date(item.savedAt || item.enviadoEm || 0).getTime();
+    return Number.isFinite(timestamp) && timestamp >= limit;
+  });
+
+  if(valid.length !== records.length){
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(valid));
+  }
+  return valid;
+}
+
+function describeRecord(item){
+  const d = item.data || {};
+  if(item.tipo === 'Parceiro') return d.razaoSocial || d.nomeFantasia || d.cnpjCpf || '';
+  if(item.tipo === 'Produto') return d.descricaoProduto || d.grupoProduto || '';
+  if(item.tipo === 'Serviço') return d.descricaoServico || d.grupoServico || '';
+  return '';
+}
+
+function addHistory(payload, protocolo){
+  const records = getHistory();
+  records.unshift({
+    savedAt: new Date().toISOString(),
+    protocolo,
+    tipo: payload.tipoCadastro || 'Parceiro',
+    data: payload,
+    status: 'Enviado'
+  });
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(records));
+  renderHistory();
+}
+
+function renderHistory(){
+  const records = getHistory();
+  const body = document.getElementById('historyBody');
+  const empty = document.getElementById('historyEmpty');
+
+  document.getElementById('countHistory').textContent = records.length;
+  body.innerHTML = '';
+
+  if(!records.length){
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+
+  records.forEach(item => {
+    const d = item.data || {};
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(new Date(item.savedAt).toLocaleString('pt-BR'))}</td>
+      <td>${escapeHtml(item.protocolo)}</td>
+      <td>${escapeHtml(item.tipo)}</td>
+      <td>${escapeHtml(d.solicitante || '')}</td>
+      <td>${escapeHtml(d.departamento || '')}</td>
+      <td>${escapeHtml(describeRecord(item))}</td>
+      <td>${escapeHtml(d.prioridade || '')}</td>
+      <td><span class="status-chip">${escapeHtml(item.status || 'Enviado')}</span></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function historyRows(){
+  return getHistory().map(item => {
+    const d = item.data || {};
+    return {
+      "Data": new Date(item.savedAt).toLocaleString('pt-BR'),
+      "Protocolo": item.protocolo || '',
+      "Tipo": item.tipo || '',
+      "Solicitante": d.solicitante || '',
+      "E-mail": d.emailSolicitante || '',
+      "Departamento": d.departamento || '',
+      "Prioridade": d.prioridade || '',
+      "Cadastro solicitado": describeRecord(item),
+      "CNPJ/CPF": d.cnpjCpf || '',
+      "NCM/NBS": d.ncm || d.ncmNbs || '',
+      "Observações": d.observacoes || '',
+      "Status": item.status || 'Enviado'
+    };
+  });
+}
+
+function exportExcel(){
+  const rows = historyRows();
+  if(!rows.length){ toast('Sem dados','Não há cadastros dos últimos 7 dias para exportar.'); return; }
+  if(typeof XLSX === 'undefined'){
+    toast('Biblioteca indisponível','Não foi possível carregar o gerador de planilhas.');
+    return;
+  }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Cadastros 7 dias');
+  XLSX.writeFile(wb, `cadastros_ultimos_7_dias_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+function exportPdf(){
+  const rows = historyRows();
+  if(!rows.length){ toast('Sem dados','Não há cadastros dos últimos 7 dias para exportar.'); return; }
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    toast('Biblioteca indisponível','Não foi possível carregar o gerador de PDF.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({orientation:'landscape'});
+  doc.setFontSize(16);
+  doc.text('Cadastros realizados nos últimos 7 dias', 14, 16);
+  doc.setFontSize(9);
+  doc.text('Gerado em ' + new Date().toLocaleString('pt-BR'), 14, 23);
+  doc.autoTable({
+    startY: 28,
+    head: [['Data','Protocolo','Tipo','Solicitante','Departamento','Cadastro','Prioridade','Status']],
+    body: getHistory().map(item => {
+      const d = item.data || {};
+      return [
+        new Date(item.savedAt).toLocaleString('pt-BR'),
+        item.protocolo || '',
+        item.tipo || '',
+        d.solicitante || '',
+        d.departamento || '',
+        describeRecord(item),
+        d.prioridade || '',
+        item.status || 'Enviado'
+      ];
+    }),
+    styles:{fontSize:7,cellPadding:2},
+    headStyles:{fontStyle:'bold'}
+  });
+  doc.save(`cadastros_ultimos_7_dias_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+
+
 function updateCount(){document.getElementById('countLocal').textContent=localStorage.getItem(STORAGE_KEY)?1:0;document.getElementById('netStatus').textContent=navigator.onLine?'ON':'OFF';document.getElementById('netStatus').className=navigator.onLine?'':'offline'}
 function setType(value, save=true){tipo.value=value;document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',s.dataset.type===value));document.getElementById('secParceiro').classList.toggle('hidden',value!=='Parceiro');document.getElementById('secProduto').classList.toggle('hidden',value!=='Produto');document.getElementById('secServico').classList.toggle('hidden',value!=='Serviço');document.getElementById('typeBadge').textContent='Cadastro de '+value;document.getElementById('formTitle').textContent='Nova solicitação de '+value;document.getElementById('progressBar').style.width=value==='Parceiro'?'33%':value==='Produto'?'66%':'100%'; if(save) saveDraft()}
 document.querySelectorAll('.step').forEach(s=>s.onclick=()=>setType(s.dataset.type));
@@ -196,6 +391,7 @@ form.addEventListener('submit', (e)=>{
     if (concluido) return;
     concluido = true;
 
+    addHistory(payload, protocoloLocal);
     localStorage.removeItem(STORAGE_KEY);
     updateCount();
 
@@ -224,8 +420,19 @@ form.addEventListener('submit', (e)=>{
   // Segurança para evitar botão travado caso o navegador não dispare onload.
   setTimeout(finalizar, 5000);
 });
+document.getElementById('exportarExcel').onclick = exportExcel;
+document.getElementById('exportarPdf').onclick = exportPdf;
+document.getElementById('limparHistorico').onclick = () => {
+  if(confirm('Deseja apagar o histórico local dos últimos 7 dias deste navegador?')){
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+    toast('Histórico removido','Os registros locais foram apagados.');
+  }
+};
+
 (async function(){
   updateCount();
+  renderHistory();
   const draft = localStorage.getItem(STORAGE_KEY); if(draft) fill(JSON.parse(draft));
   const cep = document.getElementById('cep');
   cep?.addEventListener('blur', async ()=>{
