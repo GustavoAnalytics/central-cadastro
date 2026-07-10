@@ -1,445 +1,108 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Central de Cadastros | Parceiros, Produtos e Serviços</title>
-<style>
-:root{
-  --bg:#07111f;--bg2:#0b1b31;--card:#101f35;--card2:#132844;--line:#243a5c;
-  --text:#f7fafc;--muted:#a8b5c8;--primary:#36d399;--primary2:#22c55e;--danger:#fb7185;
-  --warning:#fbbf24;--blue:#60a5fa;--shadow:0 22px 60px rgba(0,0,0,.35);
-}
-*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top left,#12345a 0,#07111f 42%,#050914 100%);color:var(--text);min-height:100vh}
-.header{padding:34px 22px 18px;max-width:1180px;margin:auto}.brand{display:flex;gap:14px;align-items:center}.logo{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--primary),#38bdf8);display:grid;place-items:center;font-weight:900;color:#06111f;box-shadow:0 12px 30px rgba(54,211,153,.25)}
-h1{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.04em}.subtitle{margin:8px 0 0;color:var(--muted);font-size:16px;line-height:1.5}.shell{max-width:1180px;margin:0 auto;padding:18px 22px 48px}.grid{display:grid;grid-template-columns:330px 1fr;gap:22px}.panel,.form{background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);border-radius:28px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}.panel{padding:22px;position:sticky;top:18px;height:max-content}.form{padding:24px}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(54,211,153,.35);background:rgba(54,211,153,.08);border-radius:999px;color:#bbf7d0;font-size:13px;font-weight:700}.steps{margin-top:22px;display:grid;gap:12px}.step{padding:15px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:.2s}.step:hover,.step.active{border-color:rgba(54,211,153,.55);background:rgba(54,211,153,.10);transform:translateY(-1px)}.step b{display:block;margin-bottom:4px}.step span{color:var(--muted);font-size:13px;line-height:1.35}.mini{margin-top:22px;padding:16px;border-radius:18px;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.18);color:#dbeafe;font-size:13px;line-height:1.5}.topbar{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:18px}.badge{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:var(--muted);font-size:12px}.progress{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:14px 0 22px}.progress i{display:block;height:100%;width:33%;background:linear-gradient(90deg,var(--primary),#38bdf8);transition:.25s}fieldset{border:0;margin:0 0 26px;padding:0}legend{font-size:18px;font-weight:900;margin-bottom:14px;letter-spacing:-.02em}.row{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.col-12{grid-column:span 12}.col-8{grid-column:span 8}.col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-3{grid-column:span 3}label{display:block;font-size:12px;color:#cbd5e1;font-weight:800;margin:0 0 7px;text-transform:uppercase;letter-spacing:.05em}input,select,textarea{width:100%;border:1px solid rgba(255,255,255,.13);background:rgba(5,12,24,.72);color:var(--text);border-radius:15px;padding:13px 14px;font:inherit;outline:none;transition:.2s}textarea{min-height:105px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:rgba(54,211,153,.7);box-shadow:0 0 0 4px rgba(54,211,153,.08)}.hidden{display:none!important}.actions{display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,.10);padding-top:18px}.btn{border:0;border-radius:16px;padding:13px 18px;font-weight:900;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:linear-gradient(135deg,var(--primary),#38bdf8);color:#06111f}.btn.ghost{background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.12)}.btn.danger{background:rgba(251,113,133,.12);color:#fecdd3;border:1px solid rgba(251,113,133,.22)}.toast{position:fixed;right:20px;bottom:20px;max-width:420px;padding:16px 18px;border-radius:18px;background:#06111f;border:1px solid rgba(54,211,153,.35);box-shadow:var(--shadow);display:none;z-index:99}.toast.show{display:block}.toast b{display:block;margin-bottom:4px}.req{color:#86efac}.offline{color:#fde68a}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:15px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}.stat b{font-size:24px;display:block}.stat span{font-size:12px;color:var(--muted)}.footer-note{color:var(--muted);font-size:12px;line-height:1.5;margin-top:12px}@media(max-width:900px){.grid{grid-template-columns:1fr}.panel{position:relative;top:0}.col-8,.col-6,.col-4,.col-3{grid-column:span 12}.topbar,.actions{flex-direction:column}.cards{grid-template-columns:1fr}}
-
-.history-panel{max-width:1180px;margin:22px auto 0;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);border-radius:28px;box-shadow:var(--shadow)}
-.history-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}.history-head h2{margin:0}.history-actions{display:flex;gap:10px;flex-wrap:wrap}
-.table-wrap{overflow:auto;border:1px solid rgba(255,255,255,.10);border-radius:18px}.history-table{width:100%;border-collapse:collapse;min-width:900px}.history-table th,.history-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;font-size:13px;vertical-align:top}.history-table th{position:sticky;top:0;background:#0b1b31;color:#dbeafe}.history-table td{color:#d8e2ef}.history-empty{padding:26px;text-align:center;color:var(--muted)}
-.history-note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5}.status-chip{display:inline-flex;padding:5px 9px;border-radius:999px;background:rgba(54,211,153,.12);border:1px solid rgba(54,211,153,.25);color:#bbf7d0;font-weight:800;font-size:11px}
-@media(max-width:900px){.history-head{align-items:flex-start;flex-direction:column}}
-
-</style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Central Corporativa de Cadastros | Sankhya</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
-
+<style>
+:root{--bg:#06101d;--panel:#102039;--line:#29415f;--text:#f8fafc;--muted:#a9b7c9;--green:#34d399;--blue:#38bdf8;--red:#fb7185;--yellow:#fbbf24}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top left,#123b65,#071321 42%,#040914);color:var(--text);min-height:100vh}
+header,.nav,main{max-width:1280px;margin:auto}header{padding:28px 22px 12px;display:flex;justify-content:space-between;gap:18px;align-items:center}.brand{display:flex;gap:14px;align-items:center}.logo{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--green),var(--blue));display:grid;place-items:center;color:#04111e;font-weight:1000}.subtitle{color:var(--muted);margin:4px 0 0;line-height:1.5}
+.nav{padding:0 22px;display:flex;gap:9px;flex-wrap:wrap}.nav button,.btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);padding:11px 15px;border-radius:13px;font-weight:900;cursor:pointer}.nav button.active,.nav button:hover{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.45)}.btn.primary{background:linear-gradient(135deg,var(--green),var(--blue));color:#04111e;border:0}.btn.danger{color:#fecdd3;border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.1)}
+main{padding:18px 22px 48px}.view{display:none}.view.active{display:block}.panel{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.11);border-radius:24px;padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.32)}
+.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:18px}.card .n{font-size:31px;font-weight:1000}.card small,label,.hint{color:var(--muted)}.types{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.type{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:17px;cursor:pointer;background:rgba(255,255,255,.04)}.type.active{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.1)}
+fieldset{border:0;padding:0;margin:0 0 24px}legend{font-size:18px;font-weight:950;margin-bottom:14px}.row{display:grid;grid-template-columns:repeat(12,1fr);gap:13px}.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
+label{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}input,select,textarea{width:100%;background:rgba(3,10,20,.75);border:1px solid rgba(255,255,255,.13);color:var(--text);border-radius:14px;padding:13px;outline:none}textarea{min-height:100px}.hidden{display:none!important}.actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:18px}
+.tablewrap{overflow:auto;border:1px solid rgba(255,255,255,.1);border-radius:16px}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;text-align:left}.table th{background:#0b1b31}.chip{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900}.pending{background:rgba(251,191,36,.1);color:#fde68a}.done{background:rgba(34,197,94,.1);color:#bbf7d0}.alert{background:rgba(251,113,133,.1);color:#fecdd3}
+.bars{display:grid;gap:12px}.bar{display:grid;grid-template-columns:140px 1fr 45px;gap:9px;align-items:center}.track{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue))}
+.search{display:grid;grid-template-columns:1fr auto;gap:10px}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.detail{padding:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:14px}.detail span{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.timeline{border-left:2px solid rgba(56,189,248,.25);padding-left:17px;margin-top:18px}.timeline div{margin-bottom:14px}.toast{position:fixed;right:18px;bottom:18px;max-width:430px;padding:15px 17px;border:1px solid rgba(52,211,153,.35);background:#06111f;border-radius:16px;display:none}.toast.show{display:block}.toast b{display:block;margin-bottom:4px}
+@media(max-width:950px){.grid2,.cards{grid-template-columns:1fr 1fr}.c8,.c6,.c4,.c3{grid-column:span 12}.types{grid-template-columns:1fr}.details{grid-template-columns:1fr}}@media(max-width:620px){.cards,.grid2{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-<header class="header">
-  <div class="brand"><div class="logo">CF</div><div><h1>Central de Cadastros</h1><p class="subtitle">Solicitação centralizada para cadastro de <b>Parceiros</b>, <b>Produtos</b> e <b>Serviços</b>, com envio automático para Google Sheets.</p></div></div>
-</header>
-<main class="shell">
-  <div class="grid">
-    <aside class="panel">
-      <span class="pill">● Portal Corporativo</span>
-      <div class="cards">
-        <div class="stat"><b id="countLocal">0</b><span>rascunhos locais</span></div>
-        <div class="stat"><b id="netStatus">ON</b><span>conexão</span></div>
-        <div class="stat"><b id="countHistory">0</b><span>cadastros em 7 dias</span></div>
-      </div>
-      <div class="steps">
-        <div class="step active" data-type="Parceiro"><b>Parceiro</b><span>Fornecedor, cliente, transportadora ou prestador.</span></div>
-        <div class="step" data-type="Produto"><b>Produto</b><span>Materiais, itens de compra, estoque e referências.</span></div>
-        <div class="step" data-type="Serviço"><b>Serviço</b><span>Serviços, retenções, CR, natureza e dados fiscais.</span></div>
-      </div>
-      <div class="mini"><b>Fluxo:</b><br>Colaborador preenche → planilha recebe → responsável cadastra no sistema → status e retorno ficam centralizados.</div>
-      <p class="footer-note">Planilha conectada: <b>Controle cadastro</b><br>ID: 1yOi0nIdYD701qygVNuc0FPzTFXvordAVlDPX26WqrM4</p>
-    </aside>
-    <section class="form">
-      <div class="topbar"><div><span class="badge" id="typeBadge">Cadastro de Parceiro</span><h2 id="formTitle">Nova solicitação</h2></div><span class="badge" id="saveInfo">Rascunho salvo automaticamente</span></div>
-      <div class="progress"><i id="progressBar"></i></div>
-      <form id="cadastroForm">
-        <input type="hidden" name="tipoCadastro" id="tipoCadastro" value="Parceiro">
-        <fieldset>
-          <legend>1. Dados do solicitante</legend>
-          <div class="row">
-            <div class="col-6"><label>Solicitante <span class="req">*</span></label><input required name="solicitante" placeholder="Nome completo"></div>
-            <div class="col-6"><label>E-mail solicitante <span class="req">*</span></label><input required type="email" name="emailSolicitante" placeholder="nome@empresa.com.br"></div>
-            <div class="col-4"><label>Departamento</label><input name="departamento" placeholder="Ex.: Suprimentos"></div>
-            <div class="col-4"><label>Prioridade</label><select name="prioridade"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Urgente</option></select></div>
-            <div class="col-4"><label>Gestor / responsável</label><input name="gestor" placeholder="Nome do gestor"></div>
-          </div>
-        </fieldset>
-        <fieldset id="secParceiro">
-          <legend>2. Dados do parceiro</legend>
-          <div class="row">
-            <div class="col-4"><label>Tipo Pessoa <span class="req">*</span></label><select name="tipoPessoa"><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div>
-            <div class="col-8"><label>Razão Social / Nome <span class="req">*</span></label><input name="razaoSocial" data-required-type="Parceiro" placeholder="Razão social ou nome completo"></div>
-            <div class="col-6"><label>Nome Fantasia</label><input name="nomeFantasia"></div>
-            <div class="col-3"><label>CNPJ / CPF</label><input name="cnpjCpf" placeholder="00.000.000/0000-00"></div>
-            <div class="col-3"><label>IE / RG</label><input name="inscricaoEstadual"></div>
-            <div class="col-4"><label>Contribuinte ICMS</label><select name="contribuinteIcms"><option>Sim</option><option>Não</option><option>Não se aplica</option></select></div>
-            <div class="col-4"><label>CEP</label><input name="cep" id="cep" placeholder="00000-000"></div>
-            <div class="col-4"><label>Telefone</label><input name="telefone"></div>
-            <div class="col-8"><label>Endereço</label><input name="endereco"></div>
-            <div class="col-4"><label>Número</label><input name="numero"></div>
-            <div class="col-4"><label>Bairro</label><input name="bairro"></div>
-            <div class="col-4"><label>Cidade</label><input name="cidade"></div>
-            <div class="col-4"><label>UF</label><input name="uf" maxlength="2"></div>
-            <div class="col-6"><label>E-mail parceiro</label><input type="email" name="emailParceiro"></div>
-            <div class="col-6"><label>Condição pagamento</label><input name="condicaoPagamento" placeholder="Ex.: 28 dias"></div>
-            <div class="col-3"><label>Banco</label><input name="banco"></div><div class="col-3"><label>Agência</label><input name="agencia"></div><div class="col-3"><label>Conta</label><input name="conta"></div><div class="col-3"><label>PIX</label><input name="pix"></div>
-          </div>
-        </fieldset>
-        <fieldset id="secProduto" class="hidden">
-          <legend>2. Dados do produto</legend>
-          <div class="row">
-            <div class="col-8"><label>Descrição Produto <span class="req">*</span></label><input name="descricaoProduto" data-required-type="Produto" placeholder="Ex.: Parafuso sextavado zincado"></div>
-            <div class="col-4"><label>Grupo Produto</label><input name="grupoProduto"></div>
-            <div class="col-3"><label>Unidade Padrão</label><select name="unidadePadrao"><option>UN</option><option>KG</option><option>CX</option><option>PC</option><option>M</option></select></div>
-            <div class="col-3"><label>Marca</label><input name="marca"></div><div class="col-3"><label>Referência Fornecedor</label><input name="referenciaFornecedor"></div><div class="col-3"><label>NCM</label><input name="ncm"></div>
-            <div class="col-3"><label>IPI %</label><input name="ipi" type="number" step="0.01"></div><div class="col-3"><label>Controla Estoque</label><select name="controlaEstoque"><option>Sim</option><option>Não</option></select></div><div class="col-3"><label>Estoque mínimo</label><input name="estoqueMinimo" type="number" step="0.01"></div><div class="col-3"><label>Estoque máximo</label><input name="estoqueMaximo" type="number" step="0.01"></div>
-            <div class="col-4"><label>Custo estimado</label><input name="custoEstimado" type="number" step="0.01"></div><div class="col-8"><label>Fornecedor sugerido</label><input name="fornecedorProduto"></div>
-          </div>
-        </fieldset>
-        <fieldset id="secServico" class="hidden">
-          <legend>2. Dados do serviço</legend>
-          <div class="row">
-            <div class="col-8"><label>Descrição Serviço <span class="req">*</span></label><input name="descricaoServico" data-required-type="Serviço" placeholder="Ex.: Manutenção preventiva de empilhadeira"></div>
-            <div class="col-4"><label>Grupo Serviço</label><input name="grupoServico"></div>
-            <div class="col-3"><label>Unidade</label><select name="unidadeServico"><option>SV</option><option>UN</option><option>H</option><option>MÊS</option></select></div>
-            <div class="col-3"><label>NCM / NBS</label><input name="ncmNbs"></div><div class="col-3"><label>Cód. Serviço Município</label><input name="codigoServicoMunicipio"></div><div class="col-3"><label>ISS %</label><input name="iss" type="number" step="0.01"></div>
-            <div class="col-4"><label>Retém impostos</label><select name="retemImpostos"><option>Sim</option><option>Não</option><option>Validar Fiscal</option></select></div>
-            <div class="col-8"><label>Fornecedor sugerido</label><input name="fornecedorServico"></div>
-            <div class="col-6"><label>Centro Resultado / CR</label><input name="centroResultado"></div><div class="col-6"><label>Conta contábil / Natureza</label><input name="natureza"></div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>3. Observações e anexos</legend>
-          <div class="row">
-            <div class="col-12"><label>Observações</label><textarea name="observacoes" placeholder="Informe detalhes importantes para evitar retrabalho no cadastro."></textarea></div>
-            <div class="col-12"><label>Link de anexo</label><input name="linkAnexo" placeholder="Cole aqui link de XML, PDF, cartão CNPJ, contrato, imagem ou pasta no Drive"></div>
-          </div>
-        </fieldset>
-        <div class="actions">
-          <button type="button" class="btn danger" id="limpar">Limpar rascunho</button>
-          <div><button type="button" class="btn ghost" id="salvar">Salvar rascunho</button> <button type="submit" class="btn primary">Enviar solicitação</button></div>
-        </div>
-      </form>
-    </section>
-  </div>
-</main>
-
-<section class="history-panel">
-  <div class="history-head">
-    <div>
-      <span class="pill">Histórico local</span>
-      <h2>Cadastros realizados nos últimos 7 dias</h2>
-      <p class="subtitle">Os registros permanecem neste navegador por 7 dias e podem ser exportados para planilha ou PDF.</p>
-    </div>
-    <div class="history-actions">
-      <button type="button" class="btn ghost" id="exportarExcel">Gerar planilha</button>
-      <button type="button" class="btn ghost" id="exportarPdf">Gerar PDF</button>
-      <button type="button" class="btn danger" id="limparHistorico">Limpar histórico</button>
-    </div>
-  </div>
-  <div class="table-wrap">
-    <table class="history-table">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Protocolo</th>
-          <th>Tipo</th>
-          <th>Solicitante</th>
-          <th>Departamento</th>
-          <th>Cadastro solicitado</th>
-          <th>Prioridade</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="historyBody"></tbody>
-    </table>
-    <div class="history-empty hidden" id="historyEmpty">Nenhum cadastro armazenado neste navegador nos últimos 7 dias.</div>
-  </div>
-  <p class="history-note">O histórico local é exclusivo deste navegador e dispositivo. A formalização corporativa permanece registrada no Google Sheets. O resumo por e-mail é enviado pelo Apps Script a cada 3 dias.</p>
+<header><div class="brand"><div class="logo">CF</div><div><h1>Central Corporativa de Cadastros</h1><p class="subtitle">Governança e acompanhamento dos cadastros do ERP Sankhya.</p></div></div><div id="net">● Conectado</div></header>
+<nav class="nav">
+<button class="active" data-view="nova">Nova solicitação</button>
+<button data-view="dashboard">Dashboard</button>
+<button data-view="consulta">Consultar protocolo</button>
+<button data-view="admin">Aprovação e status</button>
+</nav>
+<main>
+<section id="nova" class="view active">
+<div class="grid2">
+<div class="panel"><h2>Solicitação centralizada</h2><p class="subtitle">Selecione a empresa, preencha os dados obrigatórios e acompanhe pelo protocolo.</p></div>
+<div class="panel"><b>Encaminhamento automático</b><p class="hint">Área Incrível → Amanda Felisberto<br>M2LOG e Mais Armazém → Lisandra Ferreira</p></div>
+</div>
+<div class="panel" style="margin-top:18px">
+<div class="types"><div class="type active" data-type="Parceiro"><b>Parceiro</b><div class="hint">Fornecedor, cliente ou prestador</div></div><div class="type" data-type="Produto"><b>Produto</b><div class="hint">Materiais e itens de estoque</div></div><div class="type" data-type="Serviço"><b>Serviço</b><div class="hint">Serviços e dados fiscais</div></div></div>
+<form id="form"><input type="hidden" name="tipoCadastro" id="tipoCadastro" value="Parceiro">
+<fieldset><legend>1. Identificação</legend><div class="row">
+<div class="c4"><label>Empresa *</label><select name="empresa" required><option value="">Selecione...</option><option>Área Incrível</option><option>M2LOG</option><option>Mais Armazém</option></select></div>
+<div class="c4"><label>Solicitante *</label><input name="solicitante" required></div>
+<div class="c4"><label>E-mail *</label><input name="emailSolicitante" type="email" required></div>
+<div class="c4"><label>Departamento</label><input name="departamento"></div><div class="c4"><label>Prioridade</label><select name="prioridade"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Urgente</option></select></div><div class="c4"><label>Gestor</label><input name="gestor"></div>
+</div></fieldset>
+<fieldset id="parceiro"><legend>2. Parceiro</legend><div class="row">
+<div class="c4"><label>Tipo de pessoa</label><select name="tipoPessoa"><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div><div class="c8"><label>Razão social / Nome *</label><input name="razaoSocial" data-required="Parceiro"></div>
+<div class="c6"><label>Nome fantasia</label><input name="nomeFantasia"></div><div class="c3"><label>CNPJ / CPF</label><input name="cnpjCpf"></div><div class="c3"><label>IE / RG</label><input name="inscricaoEstadual"></div>
+<div class="c4"><label>Contribuinte ICMS</label><select name="contribuinteIcms"><option>Sim</option><option>Não</option><option>Não se aplica</option></select></div><div class="c4"><label>CEP</label><input id="cep" name="cep"></div><div class="c4"><label>Telefone</label><input name="telefone"></div>
+<div class="c8"><label>Endereço</label><input name="endereco"></div><div class="c4"><label>Número</label><input name="numero"></div><div class="c4"><label>Bairro</label><input name="bairro"></div><div class="c4"><label>Cidade</label><input name="cidade"></div><div class="c4"><label>UF</label><input name="uf"></div>
+</div></fieldset>
+<fieldset id="produto" class="hidden"><legend>2. Produto</legend><div class="row">
+<div class="c8"><label>Descrição *</label><input name="descricaoProduto" data-required="Produto"></div><div class="c4"><label>Grupo</label><input name="grupoProduto"></div><div class="c3"><label>Unidade</label><select name="unidadePadrao"><option>UN</option><option>KG</option><option>CX</option><option>PC</option></select></div><div class="c3"><label>Marca</label><input name="marca"></div><div class="c3"><label>Referência</label><input name="referenciaFornecedor"></div><div class="c3"><label>NCM</label><input name="ncm"></div><div class="c4"><label>Controla estoque</label><select name="controlaEstoque"><option>Sim</option><option>Não</option></select></div><div class="c4"><label>Estoque mínimo</label><input name="estoqueMinimo"></div><div class="c4"><label>Fornecedor sugerido</label><input name="fornecedorProduto"></div>
+</div></fieldset>
+<fieldset id="servico" class="hidden"><legend>2. Serviço</legend><div class="row">
+<div class="c8"><label>Descrição *</label><input name="descricaoServico" data-required="Serviço"></div><div class="c4"><label>Grupo</label><input name="grupoServico"></div><div class="c3"><label>Unidade</label><select name="unidadeServico"><option>SV</option><option>UN</option><option>H</option><option>MÊS</option></select></div><div class="c3"><label>NCM / NBS</label><input name="ncmNbs"></div><div class="c3"><label>Cód. municipal</label><input name="codigoServicoMunicipio"></div><div class="c3"><label>ISS %</label><input name="iss"></div><div class="c4"><label>Retém impostos</label><select name="retemImpostos"><option>Sim</option><option>Não</option><option>Validar Fiscal</option></select></div><div class="c4"><label>Centro de Resultado</label><input name="centroResultado"></div><div class="c4"><label>Natureza</label><input name="natureza"></div>
+</div></fieldset>
+<fieldset><legend>3. Complementos</legend><div class="row"><div class="c12"><label>Observações</label><textarea name="observacoes"></textarea></div><div class="c6"><label>Link de anexo</label><input name="linkAnexo"></div><div class="c6"><label>Arquivo para o Drive</label><input id="arquivo" type="file" accept=".pdf,.xml,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"><div class="hint">Limite: 4 MB</div></div></div></fieldset>
+<div class="actions"><button type="button" class="btn danger" id="limpar">Limpar rascunho</button><div><button type="button" class="btn" id="salvar">Salvar rascunho</button> <button type="submit" class="btn primary">Enviar solicitação</button></div></div>
+</form></div>
+<div class="panel" style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h3>Histórico local — 7 dias</h3><p class="subtitle">Registros deste navegador.</p></div><div><button class="btn" id="excel">Excel</button> <button class="btn" id="pdf">PDF</button></div></div><div class="tablewrap"><table class="table"><thead><tr><th>Data</th><th>Protocolo</th><th>Empresa</th><th>Tipo</th><th>Cadastro</th></tr></thead><tbody id="hist"></tbody></table></div></div>
 </section>
 
-<div class="toast" id="toast"><b id="toastTitle"></b><span id="toastMsg"></span></div>
+<section id="dashboard" class="view">
+<div class="cards"><div class="panel card"><div class="n" id="total">0</div><small>Solicitações</small></div><div class="panel card"><div class="n" id="pend">0</div><small>Pendentes</small></div><div class="panel card"><div class="n" id="conc">0</div><small>Concluídas</small></div><div class="panel card"><div class="n" id="sla">0%</div><small>Dentro do SLA</small></div><div class="panel card"><div class="n" id="tempo">0h</div><small>Tempo médio</small></div></div>
+<div class="grid2"><div class="panel"><h3>Por empresa</h3><div id="bars" class="bars"></div></div><div class="panel"><h3>Alertas</h3><div id="alerts"></div></div></div>
+<div class="panel" style="margin-top:18px"><div style="display:flex;justify-content:space-between"><h3>Últimas solicitações</h3><button class="btn" id="refresh">Atualizar</button></div><div class="tablewrap"><table class="table"><thead><tr><th>Data</th><th>Protocolo</th><th>Empresa</th><th>Tipo</th><th>Solicitante</th><th>Responsável</th><th>Status</th><th>SLA</th></tr></thead><tbody id="dashRows"></tbody></table></div></div>
+</section>
+
+<section id="consulta" class="view"><div class="panel"><h2>Consultar protocolo</h2><div class="search"><input id="protocol" placeholder="CAD-2026-000123"><button class="btn primary" id="buscar">Consultar</button></div><div id="result" class="hidden"></div></div></section>
+
+<section id="admin" class="view"><div class="grid2"><div class="panel"><h3>Painel administrativo</h3><label>Token</label><input type="password" id="token"><label style="margin-top:12px">Protocolo</label><input id="adminProtocol"><button class="btn" id="carregar" style="width:100%;margin-top:12px">Carregar</button></div><div class="panel"><div id="adminEmpty"><h3>Nenhuma solicitação carregada</h3></div><form id="adminForm" class="hidden"><div id="adminInfo" class="details"></div><div class="row" style="margin-top:16px"><div class="c4"><label>Status</label><select name="status"><option>Pendente</option><option>Em análise</option><option>Aprovado</option><option>Cadastrado</option><option>Devolvido</option><option>Recusado</option></select></div><div class="c4"><label>Código Sankhya</label><input name="codigoSistema"></div><div class="c4"><label>Responsável</label><input name="responsavel"></div><div class="c12"><label>Retorno / Pendência</label><textarea name="retorno"></textarea></div></div><input type="hidden" name="protocolo"><button class="btn primary">Salvar atualização</button></form></div></div></section>
+</main>
+<div class="toast" id="toast"><b id="tt"></b><span id="tm"></span></div>
 <script>
-/*
-  IMPORTANTE:
-  1) Publique o Apps Script como Web App.
-  2) Cole a URL abaixo em APPS_SCRIPT_URL.
-  3) A planilha conectada no Apps Script já está configurada pelo ID:
-     1yOi0nIdYD701qygVNuc0FPzTFXvordAVlDPX26WqrM4
-*/
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNZ5BQzuX_oDwL1YUEabQ_46edjJm-k6bu-v_IEzC2KTtgCNtNjowoCi9khn7O8vkfRg/exec";
-const STORAGE_KEY = "central_cadastros_rascunho_v1";
-const HISTORY_KEY = "central_cadastros_historico_v1";
-const HISTORY_DAYS = 7;
-const form = document.getElementById('cadastroForm');
-const tipo = document.getElementById('tipoCadastro');
-const toast = (t,m)=>{document.getElementById('toastTitle').textContent=t;document.getElementById('toastMsg').textContent=m;document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),5200)};
-function serialize(){return Object.fromEntries(new FormData(form).entries())}
-function fill(data){Object.entries(data||{}).forEach(([k,v])=>{const el=form.elements[k]; if(el) el.value=v}); setType(data?.tipoCadastro||'Parceiro', false)}
-function saveDraft(){localStorage.setItem(STORAGE_KEY, JSON.stringify(serialize()));document.getElementById('saveInfo').textContent='Rascunho salvo às '+new Date().toLocaleTimeString('pt-BR');updateCount()}
-
-function escapeHtml(value){
-  return String(value ?? '').replace(/[&<>"']/g, char => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-  })[char]);
-}
-
-function getHistory(){
-  let records = [];
-  try{ records = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
-  catch(e){ records = []; }
-
-  const limit = Date.now() - (HISTORY_DAYS * 24 * 60 * 60 * 1000);
-  const valid = records.filter(item => {
-    const timestamp = new Date(item.savedAt || item.enviadoEm || 0).getTime();
-    return Number.isFinite(timestamp) && timestamp >= limit;
-  });
-
-  if(valid.length !== records.length){
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(valid));
-  }
-  return valid;
-}
-
-function describeRecord(item){
-  const d = item.data || {};
-  if(item.tipo === 'Parceiro') return d.razaoSocial || d.nomeFantasia || d.cnpjCpf || '';
-  if(item.tipo === 'Produto') return d.descricaoProduto || d.grupoProduto || '';
-  if(item.tipo === 'Serviço') return d.descricaoServico || d.grupoServico || '';
-  return '';
-}
-
-function addHistory(payload, protocolo){
-  const records = getHistory();
-  records.unshift({
-    savedAt: new Date().toISOString(),
-    protocolo,
-    tipo: payload.tipoCadastro || 'Parceiro',
-    data: payload,
-    status: 'Enviado'
-  });
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(records));
-  renderHistory();
-}
-
-function renderHistory(){
-  const records = getHistory();
-  const body = document.getElementById('historyBody');
-  const empty = document.getElementById('historyEmpty');
-
-  document.getElementById('countHistory').textContent = records.length;
-  body.innerHTML = '';
-
-  if(!records.length){
-    empty.classList.remove('hidden');
-    return;
-  }
-
-  empty.classList.add('hidden');
-
-  records.forEach(item => {
-    const d = item.data || {};
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${escapeHtml(new Date(item.savedAt).toLocaleString('pt-BR'))}</td>
-      <td>${escapeHtml(item.protocolo)}</td>
-      <td>${escapeHtml(item.tipo)}</td>
-      <td>${escapeHtml(d.solicitante || '')}</td>
-      <td>${escapeHtml(d.departamento || '')}</td>
-      <td>${escapeHtml(describeRecord(item))}</td>
-      <td>${escapeHtml(d.prioridade || '')}</td>
-      <td><span class="status-chip">${escapeHtml(item.status || 'Enviado')}</span></td>
-    `;
-    body.appendChild(tr);
-  });
-}
-
-function historyRows(){
-  return getHistory().map(item => {
-    const d = item.data || {};
-    return {
-      "Data": new Date(item.savedAt).toLocaleString('pt-BR'),
-      "Protocolo": item.protocolo || '',
-      "Tipo": item.tipo || '',
-      "Solicitante": d.solicitante || '',
-      "E-mail": d.emailSolicitante || '',
-      "Departamento": d.departamento || '',
-      "Prioridade": d.prioridade || '',
-      "Cadastro solicitado": describeRecord(item),
-      "CNPJ/CPF": d.cnpjCpf || '',
-      "NCM/NBS": d.ncm || d.ncmNbs || '',
-      "Observações": d.observacoes || '',
-      "Status": item.status || 'Enviado'
-    };
-  });
-}
-
-function exportExcel(){
-  const rows = historyRows();
-  if(!rows.length){ toast('Sem dados','Não há cadastros dos últimos 7 dias para exportar.'); return; }
-  if(typeof XLSX === 'undefined'){
-    toast('Biblioteca indisponível','Não foi possível carregar o gerador de planilhas.');
-    return;
-  }
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Cadastros 7 dias');
-  XLSX.writeFile(wb, `cadastros_ultimos_7_dias_${new Date().toISOString().slice(0,10)}.xlsx`);
-}
-
-function exportPdf(){
-  const rows = historyRows();
-  if(!rows.length){ toast('Sem dados','Não há cadastros dos últimos 7 dias para exportar.'); return; }
-  if(!window.jspdf || !window.jspdf.jsPDF){
-    toast('Biblioteca indisponível','Não foi possível carregar o gerador de PDF.');
-    return;
-  }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({orientation:'landscape'});
-  doc.setFontSize(16);
-  doc.text('Cadastros realizados nos últimos 7 dias', 14, 16);
-  doc.setFontSize(9);
-  doc.text('Gerado em ' + new Date().toLocaleString('pt-BR'), 14, 23);
-  doc.autoTable({
-    startY: 28,
-    head: [['Data','Protocolo','Tipo','Solicitante','Departamento','Cadastro','Prioridade','Status']],
-    body: getHistory().map(item => {
-      const d = item.data || {};
-      return [
-        new Date(item.savedAt).toLocaleString('pt-BR'),
-        item.protocolo || '',
-        item.tipo || '',
-        d.solicitante || '',
-        d.departamento || '',
-        describeRecord(item),
-        d.prioridade || '',
-        item.status || 'Enviado'
-      ];
-    }),
-    styles:{fontSize:7,cellPadding:2},
-    headStyles:{fontStyle:'bold'}
-  });
-  doc.save(`cadastros_ultimos_7_dias_${new Date().toISOString().slice(0,10)}.pdf`);
-}
-
-
-function updateCount(){document.getElementById('countLocal').textContent=localStorage.getItem(STORAGE_KEY)?1:0;document.getElementById('netStatus').textContent=navigator.onLine?'ON':'OFF';document.getElementById('netStatus').className=navigator.onLine?'':'offline'}
-function setType(value, save=true){tipo.value=value;document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',s.dataset.type===value));document.getElementById('secParceiro').classList.toggle('hidden',value!=='Parceiro');document.getElementById('secProduto').classList.toggle('hidden',value!=='Produto');document.getElementById('secServico').classList.toggle('hidden',value!=='Serviço');document.getElementById('typeBadge').textContent='Cadastro de '+value;document.getElementById('formTitle').textContent='Nova solicitação de '+value;document.getElementById('progressBar').style.width=value==='Parceiro'?'33%':value==='Produto'?'66%':'100%'; if(save) saveDraft()}
-document.querySelectorAll('.step').forEach(s=>s.onclick=()=>setType(s.dataset.type));
-form.addEventListener('input',()=>{clearTimeout(window.__draftTimer);window.__draftTimer=setTimeout(saveDraft,350)});
-document.getElementById('salvar').onclick=()=>{saveDraft();toast('Rascunho salvo','Você pode fechar e continuar depois neste navegador.')};
-document.getElementById('limpar').onclick=()=>{if(confirm('Deseja limpar o rascunho deste navegador?')){localStorage.removeItem(STORAGE_KEY);form.reset();setType('Parceiro',false);updateCount();toast('Rascunho removido','Os campos foram limpos.')}};
-window.addEventListener('online',updateCount);window.addEventListener('offline',updateCount);
-form.addEventListener('submit', (e)=>{
-  e.preventDefault();
-
-  const data = serialize();
-  const required = form.querySelector(`[data-required-type="${data.tipoCadastro}"]`);
-
-  if (required && !required.value.trim()) {
-    required.focus();
-    toast('Campo obrigatório','Preencha o campo principal do cadastro.');
-    return;
-  }
-
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
-    toast('Configuração incompleta','Informe a URL publicada do Apps Script.');
-    return;
-  }
-
-  const btn = e.submitter;
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
-
-  const protocoloLocal =
-    'CAD-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
-
-  const payload = {
-    ...data,
-    protocoloLocal,
-    origem: window.location.href,
-    enviadoEm: new Date().toISOString()
-  };
-
-  // Envio por formulário oculto:
-  // evita bloqueios de CORS e garante que o Apps Script receba e.parameter.payload.
-  let iframe = document.getElementById('appsScriptTarget');
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.id = 'appsScriptTarget';
-    iframe.name = 'appsScriptTarget';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-
-  const postForm = document.createElement('form');
-  postForm.method = 'POST';
-  postForm.action = APPS_SCRIPT_URL;
-  postForm.target = 'appsScriptTarget';
-  postForm.style.display = 'none';
-
-  const payloadInput = document.createElement('input');
-  payloadInput.type = 'hidden';
-  payloadInput.name = 'payload';
-  payloadInput.value = JSON.stringify(payload);
-
-  postForm.appendChild(payloadInput);
-  document.body.appendChild(postForm);
-
-  let concluido = false;
-
-  const finalizar = () => {
-    if (concluido) return;
-    concluido = true;
-
-    addHistory(payload, protocoloLocal);
-    localStorage.removeItem(STORAGE_KEY);
-    updateCount();
-
-    toast(
-      'Solicitação enviada',
-      'Protocolo de acompanhamento: ' + protocoloLocal +
-      '. O registro será incluído na aba correspondente.'
-    );
-
-    form.reset();
-    setType('Parceiro', false);
-    btn.disabled = false;
-    btn.textContent = 'Enviar solicitação';
-
-    setTimeout(() => postForm.remove(), 1000);
-  };
-
-  iframe.onload = () => {
-    // O conteúdo do iframe não pode ser lido por segurança,
-    // mas o carregamento confirma que o POST foi concluído.
-    setTimeout(finalizar, 400);
-  };
-
-  postForm.submit();
-
-  // Segurança para evitar botão travado caso o navegador não dispare onload.
-  setTimeout(finalizar, 5000);
-});
-document.getElementById('exportarExcel').onclick = exportExcel;
-document.getElementById('exportarPdf').onclick = exportPdf;
-document.getElementById('limparHistorico').onclick = () => {
-  if(confirm('Deseja apagar o histórico local dos últimos 7 dias deste navegador?')){
-    localStorage.removeItem(HISTORY_KEY);
-    renderHistory();
-    toast('Histórico removido','Os registros locais foram apagados.');
-  }
-};
-
-(async function(){
-  updateCount();
-  renderHistory();
-  const draft = localStorage.getItem(STORAGE_KEY); if(draft) fill(JSON.parse(draft));
-  const cep = document.getElementById('cep');
-  cep?.addEventListener('blur', async ()=>{
-    const clean = cep.value.replace(/\D/g,''); if(clean.length!==8) return;
-    try{const r=await fetch('https://viacep.com.br/ws/'+clean+'/json/'); const j=await r.json(); if(!j.erro){form.elements.endereco.value=j.logradouro||'';form.elements.bairro.value=j.bairro||'';form.elements.cidade.value=j.localidade||'';form.elements.uf.value=j.uf||'';saveDraft();}}catch(e){}
-  });
-})();
+const API="https://script.google.com/macros/s/AKfycbwNZ5BQzuX_oDwL1YUEabQ_46edjJm-k6bu-v_IEzC2KTtgCNtNjowoCi9khn7O8vkfRg/exec",DRAFT="cad_draft_v3",HISTORY="cad_history_v3";
+const form=document.getElementById("form");
+function toast(t,m){tt.textContent=t;tm.textContent=m;toastEl=document.getElementById("toast");toastEl.classList.add("show");setTimeout(()=>toastEl.classList.remove("show"),5000)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function dataForm(f){return Object.fromEntries(new FormData(f).entries())}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===b.dataset.view));document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x===b));if(b.dataset.view==="dashboard")loadDashboard()});
+function setType(t){tipoCadastro.value=t;document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x.dataset.type===t));parceiro.classList.toggle("hidden",t!=="Parceiro");produto.classList.toggle("hidden",t!=="Produto");servico.classList.toggle("hidden",t!=="Serviço");saveDraft()}
+document.querySelectorAll(".type").forEach(x=>x.onclick=()=>setType(x.dataset.type));
+function saveDraft(){localStorage.setItem(DRAFT,JSON.stringify(dataForm(form)))}form.addEventListener("input",()=>{clearTimeout(window.dt);window.dt=setTimeout(saveDraft,350)});
+salvar.onclick=()=>{saveDraft();toast("Rascunho salvo","Dados salvos neste navegador.")};limpar.onclick=()=>{if(confirm("Limpar?")){localStorage.removeItem(DRAFT);form.reset();setType("Parceiro")}};
+function restore(){try{let d=JSON.parse(localStorage.getItem(DRAFT)||"null");if(!d)return;Object.entries(d).forEach(([k,v])=>{if(form.elements[k])form.elements[k].value=v});setType(d.tipoCadastro||"Parceiro")}catch(e){}}
+async function file64(f){if(!f)return null;if(f.size>4*1024*1024)throw Error("Arquivo maior que 4 MB.");return new Promise((ok,no)=>{let r=new FileReader();r.onload=()=>ok({name:f.name,type:f.type,data:String(r.result).split(",")[1]});r.onerror=no;r.readAsDataURL(f)})}
+function post(payload){return new Promise(ok=>{let i=document.getElementById("target");if(!i){i=document.createElement("iframe");i.id=i.name="target";i.style.display="none";document.body.appendChild(i)}let f=document.createElement("form");f.method="POST";f.action=API;f.target="target";f.style.display="none";let x=document.createElement("input");x.name="payload";x.value=JSON.stringify(payload);f.appendChild(x);document.body.appendChild(f);let done=()=>{f.remove();ok()};i.onload=()=>setTimeout(done,300);f.submit();setTimeout(done,5000)})}
+function history(){let a=[];try{a=JSON.parse(localStorage.getItem(HISTORY)||"[]")}catch(e){}let l=Date.now()-7*86400000;a=a.filter(x=>new Date(x.date).getTime()>l);localStorage.setItem(HISTORY,JSON.stringify(a));return a}
+function desc(d){return d.tipoCadastro==="Parceiro"?(d.razaoSocial||d.nomeFantasia||""):d.tipoCadastro==="Produto"?(d.descricaoProduto||""):(d.descricaoServico||"")}
+function renderHist(){hist.innerHTML=history().map(x=>`<tr><td>${new Date(x.date).toLocaleString("pt-BR")}</td><td>${esc(x.protocol)}</td><td>${esc(x.data.empresa)}</td><td>${esc(x.data.tipoCadastro)}</td><td>${esc(desc(x.data))}</td></tr>`).join("")}
+form.onsubmit=async e=>{e.preventDefault();let d=dataForm(form),req=form.querySelector(`[data-required="${d.tipoCadastro}"]`);if(req&&!req.value.trim()){req.focus();return toast("Campo obrigatório","Preencha o campo principal.")}let btn=e.submitter;btn.disabled=true;btn.textContent="Enviando...";try{d.action="create";d.protocoloLocal=`CAD-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;d.arquivo=await file64(arquivo.files[0]);await post(d);let a=history();a.unshift({date:new Date().toISOString(),protocol:d.protocoloLocal,data:d});localStorage.setItem(HISTORY,JSON.stringify(a));localStorage.removeItem(DRAFT);renderHist();form.reset();setType("Parceiro");toast("Solicitação enviada",`Protocolo: ${d.protocoloLocal}`)}catch(err){saveDraft();toast("Erro",err.message)}finally{btn.disabled=false;btn.textContent="Enviar solicitação"}}
+function jsonp(p){return new Promise((ok,no)=>{let cb="cb"+Date.now()+Math.random().toString(16).slice(2),s=document.createElement("script");window[cb]=d=>{ok(d);delete window[cb];s.remove()};s.onerror=()=>no(Error("Falha na consulta."));s.src=API+"?"+new URLSearchParams({...p,callback:cb,_:Date.now()});document.body.appendChild(s);setTimeout(()=>{if(window[cb]){delete window[cb];s.remove();no(Error("Tempo excedido."))}},12000)})}
+function cls(s){s=String(s).toLowerCase();return s.includes("cadastrado")||s.includes("aprovado")?"done":s.includes("atrasado")||s.includes("recusado")||s.includes("devolvido")?"alert":"pending"}
+async function loadDashboard(){try{let r=await jsonp({action:"dashboard"}),d=r.data;if(!r.ok)throw Error(r.message);total.textContent=d.total;pend.textContent=d.pendentes;conc.textContent=d.concluidas;sla.textContent=d.slaPercent+"%";tempo.textContent=d.tempoMedioHoras+"h";let m=Math.max(1,...Object.values(d.porEmpresa));bars.innerHTML=Object.entries(d.porEmpresa).map(([k,v])=>`<div class="bar"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${v/m*100}%"></div></div><b>${v}</b></div>`).join("");alerts.innerHTML=d.alertas.length?d.alertas.map(x=>`<div class="chip alert" style="display:block;margin-bottom:8px">${esc(x)}</div>`).join(""):`<span class="chip done">Sem alertas críticos</span>`;dashRows.innerHTML=d.recentes.map(x=>`<tr><td>${esc(x.data)}</td><td>${esc(x.protocolo)}</td><td>${esc(x.empresa)}</td><td>${esc(x.tipo)}</td><td>${esc(x.solicitante)}</td><td>${esc(x.responsavel)}</td><td><span class="chip ${cls(x.status)}">${esc(x.status)}</span></td><td>${esc(x.sla)}</td></tr>`).join("")}catch(e){toast("Dashboard",e.message)}}refresh.onclick=loadDashboard;
+function renderResult(x,target){target.innerHTML=`<div class="details"><div class="detail"><span>Protocolo</span><b>${esc(x.protocolo)}</b></div><div class="detail"><span>Empresa</span><b>${esc(x.empresa)}</b></div><div class="detail"><span>Responsável</span><b>${esc(x.responsavel)}</b></div><div class="detail"><span>Status</span><b>${esc(x.status)}</b></div><div class="detail"><span>SLA</span><b>${esc(x.sla)}</b></div><div class="detail"><span>Código Sankhya</span><b>${esc(x.codigoSistema||"-")}</b></div></div><div class="timeline">${x.historico.map(h=>`<div><b>${esc(h.status)}</b><small>${esc(h.data)} — ${esc(h.usuario)}</small><p class="hint">${esc(h.observacao)}</p></div>`).join("")}</div>`;target.classList.remove("hidden")}
+buscar.onclick=async()=>{try{let r=await jsonp({action:"protocol",protocol:protocol.value.trim()});if(!r.ok)throw Error(r.message);renderResult(r.data,result)}catch(e){toast("Consulta",e.message)}}
+carregar.onclick=async()=>{try{let r=await jsonp({action:"adminProtocol",protocol:adminProtocol.value.trim(),token:token.value});if(!r.ok)throw Error(r.message);adminEmpty.classList.add("hidden");adminForm.classList.remove("hidden");let x=r.data;adminForm.elements.protocolo.value=x.protocolo;adminForm.elements.status.value=x.status;adminForm.elements.responsavel.value=x.responsavel;adminInfo.innerHTML=`<div class="detail"><span>Empresa</span><b>${esc(x.empresa)}</b></div><div class="detail"><span>Tipo</span><b>${esc(x.tipo)}</b></div><div class="detail"><span>Solicitante</span><b>${esc(x.solicitante)}</b></div>`}catch(e){toast("Admin",e.message)}}
+adminForm.onsubmit=async e=>{e.preventDefault();let d=dataForm(adminForm);d.action="updateStatus";d.token=token.value;await post(d);toast("Atualização enviada","Status enviado para a planilha.");setTimeout(()=>carregar.click(),1500)}
+excel.onclick=()=>{let rows=history().map(x=>({Data:new Date(x.date).toLocaleString("pt-BR"),Protocolo:x.protocol,Empresa:x.data.empresa,Tipo:x.data.tipoCadastro,Cadastro:desc(x.data)});if(!rows.length)return toast("Sem dados","Nada para exportar.");let ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Cadastros");XLSX.writeFile(wb,"cadastros_7_dias.xlsx")}
+pdf.onclick=()=>{let rows=history();if(!rows.length)return toast("Sem dados","Nada para exportar.");let{jsPDF}=window.jspdf,doc=new jsPDF({orientation:"landscape"});doc.text("Cadastros dos últimos 7 dias",14,16);doc.autoTable({startY:22,head:[["Data","Protocolo","Empresa","Tipo","Cadastro"]],body:rows.map(x=>[new Date(x.date).toLocaleString("pt-BR"),x.protocol,x.data.empresa,x.data.tipoCadastro,desc(x.data)])});doc.save("cadastros_7_dias.pdf")}
+cep.onblur=async()=>{let c=cep.value.replace(/\D/g,"");if(c.length!==8)return;try{let j=await(await fetch(`https://viacep.com.br/ws/${c}/json/`)).json();if(!j.erro){form.elements.endereco.value=j.logradouro||"";form.elements.bairro.value=j.bairro||"";form.elements.cidade.value=j.localidade||"";form.elements.uf.value=j.uf||""}}catch(e){}}
+restore();renderHist();
 </script>
 </body>
 </html>
