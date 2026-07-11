@@ -214,6 +214,12 @@ textarea{min-height:100px}
         </div>
       </fieldset>
 
+
+      <div id="emailConfigNotice" class="panel" style="margin:0 0 18px;padding:14px;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)">
+        <b>Configuração de e-mail necessária</b>
+        <p class="hint" style="margin-bottom:0">O envio só funcionará depois de preencher a Public Key, o Service ID e o Template ID do EmailJS no final do arquivo HTML.</p>
+      </div>
+
       <div class="actions">
         <button type="button" class="btn danger" id="limpar">Limpar rascunho</button>
         <div>
@@ -262,47 +268,71 @@ const EMAIL_GUSTAVO = "gustavo.farias@areaincrivel.com.br";
 const DRAFT_KEY = "central_cadastros_email_draft_v1";
 const HISTORY_KEY = "central_cadastros_email_history_v1";
 const form = document.getElementById("cadastroForm");
+const toastBox = document.getElementById("toast");
+const toastTituloEl = document.getElementById("toastTitulo");
+const toastMensagemEl = document.getElementById("toastMensagem");
+const sistemaEl = document.getElementById("sistema");
+const sankhyaAreaEl = document.getElementById("sankhyaArea");
+const parceiroEl = document.getElementById("parceiro");
+const produtoEl = document.getElementById("produto");
+const servicoEl = document.getElementById("servico");
+const insumoEl = document.getElementById("insumo");
+const tipoCadastroEl = document.getElementById("tipoCadastro");
+const salvarBtn = document.getElementById("salvar");
+const limparBtn = document.getElementById("limpar");
+const excelBtn = document.getElementById("excel");
+const pdfBtn = document.getElementById("pdf");
+const cepEl = document.getElementById("cep");
+const historicoBodyEl = document.getElementById("historicoBody");
+const netStatusEl = document.getElementById("netStatus");
 
-emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+const EMAILJS_CONFIGURADO =
+  !EMAILJS_PUBLIC_KEY.includes("COLE_") &&
+  !EMAILJS_SERVICE_ID.includes("COLE_") &&
+  !EMAILJS_TEMPLATE_ID.includes("COLE_");
 
-function toast(titulo,mensagem){
-  toastTitulo.textContent=titulo;
-  toastMensagem.textContent=mensagem;
-  toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"),5000);
+if (typeof emailjs !== "undefined" && EMAILJS_CONFIGURADO) {
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+}
+
+function mostrarToast(titulo,mensagem){
+  toastTituloEl.textContent = titulo;
+  toastMensagemEl.textContent = mensagem;
+  toastBox.classList.add("show");
+  setTimeout(() => toastBox.classList.remove("show"), 5000);
 }
 
 function dadosForm(){ return Object.fromEntries(new FormData(form).entries()); }
 
 function setType(tipo){
-  tipoCadastro.value=tipo;
+  tipoCadastroEl.value=tipo;
   document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x.dataset.type===tipo));
-  parceiro.classList.toggle("hidden",tipo!=="Parceiro");
-  produto.classList.toggle("hidden",tipo!=="Produto");
-  servico.classList.toggle("hidden",tipo!=="Serviço");
+  parceiroEl.classList.toggle("hidden",tipo!=="Parceiro");
+  produtoEl.classList.toggle("hidden",tipo!=="Produto");
+  servicoEl.classList.toggle("hidden",tipo!=="Serviço");
 }
 
 document.querySelectorAll(".type").forEach(x=>x.onclick=()=>setType(x.dataset.type));
 
-sistema.onchange=()=>{
-  const s=sistema.value;
-  sankhyaArea.classList.toggle("hidden",s!=="Sankhya");
-  insumo.classList.toggle("hidden",s!=="Sienge");
+sistemaEl.addEventListener("change", ()=>{
+  const s=sistemaEl.value;
+  sankhyaAreaEl.classList.toggle("hidden",s!=="Sankhya");
+  insumoEl.classList.toggle("hidden",s!=="Sienge");
 
   if(s==="Sankhya") setType("Parceiro");
   else if(s==="Sienge"){
-    parceiro.classList.add("hidden");
-    produto.classList.add("hidden");
-    servico.classList.add("hidden");
-    tipoCadastro.value="Insumo";
+    parceiroEl.classList.add("hidden");
+    produtoEl.classList.add("hidden");
+    servicoEl.classList.add("hidden");
+    tipoCadastroEl.value="Insumo";
   }else{
-    parceiro.classList.add("hidden");
-    produto.classList.add("hidden");
-    servico.classList.add("hidden");
-    insumo.classList.add("hidden");
+    parceiroEl.classList.add("hidden");
+    produtoEl.classList.add("hidden");
+    servicoEl.classList.add("hidden");
+    insumoEl.classList.add("hidden");
   }
   salvarRascunho();
-};
+});
 
 function salvarRascunho(){
   localStorage.setItem(DRAFT_KEY,JSON.stringify(dadosForm()));
@@ -313,27 +343,27 @@ form.addEventListener("input",()=>{
   window.rascunhoTimer=setTimeout(salvarRascunho,350);
 });
 
-salvar.onclick=()=>{ salvarRascunho(); toast("Rascunho salvo","Os dados foram salvos neste navegador."); };
+salvarBtn.addEventListener("click",()=>{ salvarRascunho(); mostrarToast("Rascunho salvo","Os dados foram salvos neste navegador."); });
 
-limpar.onclick=()=>{
+limparBtn.addEventListener("click",()=>{
   if(confirm("Deseja limpar o rascunho?")){
     localStorage.removeItem(DRAFT_KEY);
     form.reset();
     sankhyaArea.classList.add("hidden");
-    parceiro.classList.add("hidden");
-    produto.classList.add("hidden");
-    servico.classList.add("hidden");
-    insumo.classList.add("hidden");
-    tipoCadastro.value="Parceiro";
+    parceiroEl.classList.add("hidden");
+    produtoEl.classList.add("hidden");
+    servicoEl.classList.add("hidden");
+    insumoEl.classList.add("hidden");
+    tipoCadastroEl.value="Parceiro";
   }
-};
+});
 
 function restaurarRascunho(){
   try{
     const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");
     if(!d)return;
     Object.entries(d).forEach(([k,v])=>{ if(form.elements[k]) form.elements[k].value=v; });
-    sistema.dispatchEvent(new Event("change"));
+    sistemaEl.dispatchEvent(new Event("change"));
     if(d.sistema==="Sankhya") setType(d.tipoCadastro||"Parceiro");
   }catch(e){}
 }
@@ -371,6 +401,12 @@ function gerarTabelaEmail(d,protocolo,responsavel){
 }
 
 async function enviarEmail(toEmail,toName,d,protocolo,responsavel){
+  if (typeof emailjs === "undefined") {
+    throw new Error("A biblioteca EmailJS não foi carregada. Verifique sua conexão com a internet.");
+  }
+  if (!EMAILJS_CONFIGURADO) {
+    throw new Error("EmailJS não configurado. Informe Public Key, Service ID e Template ID.");
+  }
   const params={
     to_email:toEmail,
     to_name:toName,
@@ -409,7 +445,7 @@ function registrarHistorico(d,protocolo){
 }
 
 function renderizarHistorico(){
-  historicoBody.innerHTML=obterHistorico().map(x=>`<tr>
+  historicoBodyEl.innerHTML=obterHistorico().map(x=>`<tr>
     <td>${new Date(x.dataEnvio).toLocaleString("pt-BR")}</td>
     <td>${x.protocolo}</td>
     <td>${x.dados.sistema}</td>
@@ -426,15 +462,11 @@ form.onsubmit=async e=>{
 
   if(principal && !principal.value.trim()){
     principal.focus();
-    return toast("Campo obrigatório","Preencha o campo principal do cadastro.");
+    return mostrarToast("Campo obrigatório","Preencha o campo principal do cadastro.");
   }
 
-  if(
-    EMAILJS_PUBLIC_KEY.includes("COLE_") ||
-    EMAILJS_SERVICE_ID.includes("COLE_") ||
-    EMAILJS_TEMPLATE_ID.includes("COLE_")
-  ){
-    return toast("EmailJS não configurado","Preencha Public Key, Service ID e Template ID no código.");
+  if (!EMAILJS_CONFIGURADO) {
+    return mostrarToast("EmailJS não configurado","Preencha Public Key, Service ID e Template ID no código antes de publicar.");
   }
 
   const btn=e.submitter;
@@ -451,19 +483,19 @@ form.onsubmit=async e=>{
     registrarHistorico(d,protocolo);
     localStorage.removeItem(DRAFT_KEY);
     form.reset();
-    sistema.dispatchEvent(new Event("change"));
+    sistemaEl.dispatchEvent(new Event("change"));
 
-    toast("Solicitação enviada",`Protocolo: ${protocolo}`);
+    mostrarToast("Solicitação enviada",`Protocolo: ${protocolo}`);
   }catch(err){
     salvarRascunho();
-    toast("Falha no envio",err?.text||err?.message||"Não foi possível enviar o e-mail.");
+    mostrarToast("Falha no envio",err?.text||err?.message||"Não foi possível enviar o e-mail.");
   }finally{
     btn.disabled=false;
     btn.textContent="Enviar solicitação";
   }
 };
 
-excel.onclick=()=>{
+excelBtn.addEventListener("click",()=>{
   const rows=obterHistorico().map(x=>({
     Data:new Date(x.dataEnvio).toLocaleString("pt-BR"),
     Protocolo:x.protocolo,
@@ -474,15 +506,15 @@ excel.onclick=()=>{
     Solicitante:x.dados.solicitante,
     Prioridade:x.dados.prioridade
   }));
-  if(!rows.length)return toast("Sem dados","Nada para exportar.");
+  if(!rows.length)return mostrarToast("Sem dados","Nada para exportar.");
   const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"Cadastros");
   XLSX.writeFile(wb,"cadastros_7_dias.xlsx");
-};
+});
 
-pdf.onclick=()=>{
+pdfBtn.addEventListener("click",()=>{
   const rows=obterHistorico();
-  if(!rows.length)return toast("Sem dados","Nada para exportar.");
+  if(!rows.length)return mostrarToast("Sem dados","Nada para exportar.");
   const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:"landscape"});
   doc.text("Cadastros dos últimos 7 dias",14,16);
   doc.autoTable({
@@ -498,10 +530,10 @@ pdf.onclick=()=>{
     ])
   });
   doc.save("cadastros_7_dias.pdf");
-};
+});
 
-cep.onblur=async()=>{
-  const c=cep.value.replace(/\D/g,"");
+cepEl.addEventListener("blur",async()=>{
+  const c=cepEl.value.replace(/\D/g,"");
   if(c.length!==8)return;
   try{
     const j=await(await fetch(`https://viacep.com.br/ws/${c}/json/`)).json();
@@ -512,10 +544,13 @@ cep.onblur=async()=>{
       form.elements.uf.value=j.uf||"";
     }
   }catch(e){}
-};
+});
 
-window.addEventListener("online",()=>netStatus.textContent="● Conectado");
-window.addEventListener("offline",()=>netStatus.textContent="● Offline");
+window.addEventListener("online",()=>netStatusEl.textContent="● Conectado");
+window.addEventListener("offline",()=>netStatusEl.textContent="● Offline");
+
+const avisoConfig = document.getElementById("emailConfigNotice");
+if (EMAILJS_CONFIGURADO && avisoConfig) avisoConfig.classList.add("hidden");
 
 restaurarRascunho();
 renderizarHistorico();
