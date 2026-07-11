@@ -2,134 +2,523 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Central Corporativa de Cadastros | Sankhya e Sienge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Central de Cadastros | Sankhya e Sienge</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+
 <style>
-:root{--bg:#06101d;--panel:#102039;--line:#29415f;--text:#f8fafc;--muted:#a9b7c9;--green:#34d399;--blue:#38bdf8;--red:#fb7185;--yellow:#fbbf24}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top left,#123b65,#071321 42%,#040914);color:var(--text);min-height:100vh}
-header,.nav,main{max-width:1280px;margin:auto}header{padding:28px 22px 12px;display:flex;justify-content:space-between;gap:18px;align-items:center}.brand{display:flex;gap:14px;align-items:center}.logo{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--green),var(--blue));display:grid;place-items:center;color:#04111e;font-weight:1000}.subtitle{color:var(--muted);margin:4px 0 0;line-height:1.5}
-.nav{padding:0 22px;display:flex;gap:9px;flex-wrap:wrap}.nav button,.btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);padding:11px 15px;border-radius:13px;font-weight:900;cursor:pointer}.nav button.active,.nav button:hover{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.45)}.btn.primary{background:linear-gradient(135deg,var(--green),var(--blue));color:#04111e;border:0}.btn.danger{color:#fecdd3;border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.1)}
-main{padding:18px 22px 48px}.view{display:none}.view.active{display:block}.panel{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.11);border-radius:24px;padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.32)}
-.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:18px}.card .n{font-size:31px;font-weight:1000}.card small,label,.hint{color:var(--muted)}.types{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.type{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:17px;cursor:pointer;background:rgba(255,255,255,.04)}.type.active{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.1)}
-fieldset{border:0;padding:0;margin:0 0 24px}legend{font-size:18px;font-weight:950;margin-bottom:14px}.row{display:grid;grid-template-columns:repeat(12,1fr);gap:13px}.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
-label{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}input,select,textarea{width:100%;background:rgba(3,10,20,.75);border:1px solid rgba(255,255,255,.13);color:var(--text);border-radius:14px;padding:13px;outline:none}textarea{min-height:100px}.hidden{display:none!important}.actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:18px}
-.tablewrap{overflow:auto;border:1px solid rgba(255,255,255,.1);border-radius:16px}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;text-align:left}.table th{background:#0b1b31}.chip{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900}.pending{background:rgba(251,191,36,.1);color:#fde68a}.done{background:rgba(34,197,94,.1);color:#bbf7d0}.alert{background:rgba(251,113,133,.1);color:#fecdd3}
-.bars{display:grid;gap:12px}.bar{display:grid;grid-template-columns:140px 1fr 45px;gap:9px;align-items:center}.track{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue))}
-.search{display:grid;grid-template-columns:1fr auto;gap:10px}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.detail{padding:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:14px}.detail span{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.timeline{border-left:2px solid rgba(56,189,248,.25);padding-left:17px;margin-top:18px}.timeline div{margin-bottom:14px}.toast{position:fixed;right:18px;bottom:18px;max-width:430px;padding:15px 17px;border:1px solid rgba(52,211,153,.35);background:#06111f;border-radius:16px;display:none}.toast.show{display:block}.toast b{display:block;margin-bottom:4px}
-@media(max-width:950px){.grid2,.cards{grid-template-columns:1fr 1fr}.c8,.c6,.c4,.c3{grid-column:span 12}.types{grid-template-columns:1fr}.details{grid-template-columns:1fr}}@media(max-width:620px){.cards,.grid2{grid-template-columns:1fr}}
+:root{
+  --bg:#06101d;--panel:#102039;--line:#29415f;--text:#f8fafc;--muted:#a9b7c9;
+  --green:#34d399;--blue:#38bdf8;--red:#fb7185;--yellow:#fbbf24;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:radial-gradient(circle at top left,#123b65,#071321 42%,#040914);
+  color:var(--text);min-height:100vh
+}
+header,main{max-width:1180px;margin:auto}
+header{padding:28px 22px 12px;display:flex;justify-content:space-between;gap:18px;align-items:center}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--green),var(--blue));display:grid;place-items:center;color:#04111e;font-weight:1000}
+.subtitle,.hint{color:var(--muted);line-height:1.5}
+main{padding:18px 22px 48px}
+.panel{
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  border:1px solid rgba(255,255,255,.11);border-radius:24px;padding:22px;
+  box-shadow:0 25px 70px rgba(0,0,0,.32)
+}
+.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.type{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:17px;cursor:pointer;background:rgba(255,255,255,.04)}
+.type.active{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.1)}
+fieldset{border:0;padding:0;margin:0 0 24px}
+legend{font-size:18px;font-weight:950;margin-bottom:14px}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:13px}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
+label{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;color:var(--muted)}
+input,select,textarea{
+  width:100%;background:rgba(3,10,20,.75);border:1px solid rgba(255,255,255,.13);
+  color:var(--text);border-radius:14px;padding:13px;outline:none
+}
+textarea{min-height:100px}
+.hidden{display:none!important}
+.actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:18px}
+.btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);padding:11px 15px;border-radius:13px;font-weight:900;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,var(--green),var(--blue));color:#04111e;border:0}
+.btn.danger{color:#fecdd3;border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.1)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.tablewrap{overflow:auto;border:1px solid rgba(255,255,255,.1);border-radius:16px}
+.table{width:100%;border-collapse:collapse;min-width:850px}
+.table th,.table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;text-align:left}
+.table th{background:#0b1b31}
+.toast{position:fixed;right:18px;bottom:18px;max-width:430px;padding:15px 17px;border:1px solid rgba(52,211,153,.35);background:#06111f;border-radius:16px;display:none}
+.toast.show{display:block}.toast b{display:block;margin-bottom:4px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}.c8,.c6,.c4,.c3{grid-column:span 12}.types{grid-template-columns:1fr}}
 </style>
 </head>
+
 <body>
-<header><div class="brand"><div class="logo">CF</div><div><h1>Central Corporativa de Cadastros</h1><p class="subtitle">Governança e acompanhamento dos cadastros dos sistemas Sankhya e Sienge.</p></div></div><div id="net">● Conectado</div></header>
-<nav class="nav">
-<button class="active" data-view="nova">Nova solicitação</button>
-<button data-view="dashboard">Dashboard</button>
-<button data-view="consulta">Consultar protocolo</button>
-<button data-view="admin">Aprovação e status</button>
-</nav>
+<header>
+  <div class="brand">
+    <div class="logo">CF</div>
+    <div>
+      <h1>Central Corporativa de Cadastros</h1>
+      <p class="subtitle">Solicitações de cadastro para Sankhya e Sienge, com envio direto por e-mail.</p>
+    </div>
+  </div>
+  <div id="netStatus">● Conectado</div>
+</header>
+
 <main>
-<section id="nova" class="view active">
-<div class="grid2">
-<div class="panel"><h2>Solicitação centralizada</h2><p class="subtitle">Selecione a empresa, preencha os dados obrigatórios e acompanhe pelo protocolo.</p></div>
-<div class="panel"><b>Encaminhamento automático</b><p class="hint">Sienge (todas as empresas) → Amanda Felisberto<br>Sankhya / Área Incrível → Amanda Felisberto<br>Sankhya / A10 e M2LOG → Lisandra Ferreira<br>Resumo executivo diário de todas as solicitações → Gustavo Farias</p></div>
-</div>
-<div class="panel" style="margin-top:18px">
-<div class="types">
-<div class="type active" data-system="Sankhya" data-type="Parceiro"><b>Parceiro</b><div class="hint">Fornecedor, cliente ou prestador</div></div>
-<div class="type" data-system="Sankhya" data-type="Produto"><b>Produto</b><div class="hint">Materiais e itens de estoque</div></div>
-<div class="type" data-system="Sankhya" data-type="Serviço"><b>Serviço</b><div class="hint">Serviços e dados fiscais</div></div>
-<div class="type hidden" data-system="Sienge" data-type="Insumo"><b>Insumo</b><div class="hint">Cadastro de insumos no Sienge</div></div>
-</div>
-<form id="form"><input type="hidden" name="tipoCadastro" id="tipoCadastro" value="Parceiro">
-<fieldset><legend>1. Identificação</legend><div class="row">
-<div class="c3"><label>Empresa *</label><select name="empresa" required><option value="">Selecione...</option><option>Área Incrível</option><option>A10</option><option>M2LOG</option></select></div>
-<div class="c3"><label>Sistema *</label><select name="sistema" id="sistema" required><option value="Sankhya">Sankhya</option><option value="Sienge">Sienge</option></select></div>
-<div class="c3"><label>Solicitante *</label><input name="solicitante" required></div>
-<div class="c3"><label>E-mail *</label><input name="emailSolicitante" type="email" required></div>
-<div class="c4"><label>Departamento</label><input name="departamento"></div><div class="c4"><label>Prioridade</label><select name="prioridade"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Urgente</option></select></div><div class="c4"><label>Gestor</label><input name="gestor"></div>
-</div></fieldset>
-<fieldset id="parceiro"><legend>2. Parceiro</legend><div class="row">
-<div class="c4"><label>Tipo de pessoa</label><select name="tipoPessoa"><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div><div class="c8"><label>Razão social / Nome *</label><input name="razaoSocial" data-required="Parceiro"></div>
-<div class="c6"><label>Nome fantasia</label><input name="nomeFantasia"></div><div class="c3"><label>CNPJ / CPF</label><input name="cnpjCpf"></div><div class="c3"><label>IE / RG</label><input name="inscricaoEstadual"></div>
-<div class="c4"><label>Contribuinte ICMS</label><select name="contribuinteIcms"><option>Sim</option><option>Não</option><option>Não se aplica</option></select></div><div class="c4"><label>CEP</label><input id="cep" name="cep"></div><div class="c4"><label>Telefone</label><input name="telefone"></div>
-<div class="c8"><label>Endereço</label><input name="endereco"></div><div class="c4"><label>Número</label><input name="numero"></div><div class="c4"><label>Bairro</label><input name="bairro"></div><div class="c4"><label>Cidade</label><input name="cidade"></div><div class="c4"><label>UF</label><input name="uf"></div>
-</div></fieldset>
-<fieldset id="produto" class="hidden"><legend>2. Produto</legend><div class="row">
-<div class="c8"><label>Descrição *</label><input name="descricaoProduto" data-required="Produto"></div><div class="c4"><label>Grupo</label><input name="grupoProduto"></div><div class="c3"><label>Unidade</label><select name="unidadePadrao"><option>UN</option><option>KG</option><option>CX</option><option>PC</option></select></div><div class="c3"><label>Marca</label><input name="marca"></div><div class="c3"><label>Referência</label><input name="referenciaFornecedor"></div><div class="c3"><label>NCM</label><input name="ncm"></div><div class="c4"><label>Controla estoque</label><select name="controlaEstoque"><option>Sim</option><option>Não</option></select></div><div class="c4"><label>Estoque mínimo</label><input name="estoqueMinimo"></div><div class="c4"><label>Fornecedor sugerido</label><input name="fornecedorProduto"></div>
-</div></fieldset>
-<fieldset id="servico" class="hidden"><legend>2. Serviço</legend><div class="row">
-<div class="c8"><label>Descrição *</label><input name="descricaoServico" data-required="Serviço"></div><div class="c4"><label>Grupo</label><input name="grupoServico"></div><div class="c3"><label>Unidade</label><select name="unidadeServico"><option>SV</option><option>UN</option><option>H</option><option>MÊS</option></select></div><div class="c3"><label>NCM / NBS</label><input name="ncmNbs"></div><div class="c3"><label>Cód. municipal</label><input name="codigoServicoMunicipio"></div><div class="c3"><label>ISS %</label><input name="iss"></div><div class="c4"><label>Retém impostos</label><select name="retemImpostos"><option>Sim</option><option>Não</option><option>Validar Fiscal</option></select></div><div class="c4"><label>Centro de Resultado</label><input name="centroResultado"></div><div class="c4"><label>Natureza</label><input name="natureza"></div>
-</div></fieldset>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Solicitação centralizada</h2>
+      <p class="subtitle">Preencha os dados e a solicitação será enviada automaticamente ao responsável correto e também ao Gustavo.</p>
+    </div>
+    <div class="panel">
+      <b>Encaminhamento automático</b>
+      <p class="hint">
+        Sienge → Amanda Felisberto<br>
+        Sankhya / Área Incrível → Amanda Felisberto<br>
+        Sankhya / A10 e M2LOG → Lisandra Ferreira<br>
+        Cópia de todas as solicitações → Gustavo Farias
+      </p>
+    </div>
+  </div>
 
-<fieldset id="insumo" class="hidden"><legend>2. Insumo — Sienge</legend><div class="row">
-<div class="c6"><label>Descrição *</label><input name="descricaoInsumo" data-required="Insumo" placeholder="Descrição completa do insumo"></div>
-<div class="c3"><label>Unidade de medida *</label><select name="unidadeMedida"><option value="">Selecione...</option><option>UN</option><option>KG</option><option>M</option><option>M²</option><option>M³</option><option>L</option><option>CX</option><option>PCT</option><option>TON</option><option>H</option><option>VB</option></select></div>
-<div class="c3"><label>Grupo de insumo *</label><input name="grupoInsumo" placeholder="Ex.: Material, Serviço, Equipamento"></div>
-<div class="c6"><label>Conta financeira</label><input name="contaFinanceira" value="Insumo" readonly></div>
-<div class="c6"><label>Aplicação / Observação técnica</label><input name="aplicacaoInsumo" placeholder="Onde ou como o insumo será utilizado"></div>
-</div></fieldset>
-<fieldset><legend>3. Complementos</legend><div class="row"><div class="c12"><label>Observações</label><textarea name="observacoes"></textarea></div><div class="c6"><label>Link de anexo</label><input name="linkAnexo"></div><div class="c6"><label>Arquivo para o Drive</label><input id="arquivo" type="file" accept=".pdf,.xml,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"><div class="hint">Limite: 4 MB</div></div></div></fieldset>
-<div class="actions"><button type="button" class="btn danger" id="limpar">Limpar rascunho</button><div><button type="button" class="btn" id="salvar">Salvar rascunho</button> <button type="submit" class="btn primary">Enviar solicitação</button></div></div>
-</form></div>
-<div class="panel" style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h3>Histórico local — 7 dias</h3><p class="subtitle">Registros deste navegador.</p></div><div><button class="btn" id="excel">Excel</button> <button class="btn" id="pdf">PDF</button></div></div><div class="tablewrap"><table class="table"><thead><tr><th>Data</th><th>Protocolo</th><th>Empresa</th><th>Sistema</th><th>Tipo</th><th>Cadastro</th></tr></thead><tbody id="hist"></tbody></table></div></div>
-</section>
+  <div class="panel" style="margin-top:18px">
+    <form id="cadastroForm">
+      <fieldset>
+        <legend>1. Identificação</legend>
+        <div class="row">
+          <div class="c4">
+            <label>Sistema *</label>
+            <select name="sistema" id="sistema" required>
+              <option value="">Selecione...</option>
+              <option value="Sankhya">Sankhya</option>
+              <option value="Sienge">Sienge</option>
+            </select>
+          </div>
+          <div class="c4">
+            <label>Empresa *</label>
+            <select name="empresa" required>
+              <option value="">Selecione...</option>
+              <option value="Área Incrível">Área Incrível</option>
+              <option value="A10">A10</option>
+              <option value="M2LOG">M2LOG</option>
+            </select>
+          </div>
+          <div class="c4">
+            <label>Solicitante *</label>
+            <input name="solicitante" required>
+          </div>
+          <div class="c4">
+            <label>E-mail *</label>
+            <input name="emailSolicitante" type="email" required>
+          </div>
+          <div class="c4">
+            <label>Departamento</label>
+            <input name="departamento">
+          </div>
+          <div class="c4">
+            <label>Prioridade</label>
+            <select name="prioridade">
+              <option>Baixa</option>
+              <option selected>Média</option>
+              <option>Alta</option>
+              <option>Urgente</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
 
-<section id="dashboard" class="view">
-<div class="cards"><div class="panel card"><div class="n" id="total">0</div><small>Solicitações</small></div><div class="panel card"><div class="n" id="pend">0</div><small>Pendentes</small></div><div class="panel card"><div class="n" id="conc">0</div><small>Concluídas</small></div><div class="panel card"><div class="n" id="sla">0%</div><small>Dentro do SLA</small></div><div class="panel card"><div class="n" id="tempo">0h</div><small>Tempo médio</small></div></div>
-<div class="grid2"><div class="panel"><h3>Por empresa</h3><div id="bars" class="bars"></div></div><div class="panel"><h3>Alertas</h3><div id="alerts"></div></div></div>
-<div class="panel" style="margin-top:18px"><div style="display:flex;justify-content:space-between"><h3>Últimas solicitações</h3><button class="btn" id="refresh">Atualizar</button></div><div class="tablewrap"><table class="table"><thead><tr><th>Data</th><th>Protocolo</th><th>Empresa</th><th>Sistema</th><th>Tipo</th><th>Solicitante</th><th>Responsável</th><th>Status</th><th>SLA</th></tr></thead><tbody id="dashRows"></tbody></table></div></div>
-</section>
+      <div id="sankhyaArea" class="hidden">
+        <div class="types">
+          <div class="type active" data-type="Parceiro"><b>Parceiro</b><div class="hint">Fornecedor, cliente ou prestador</div></div>
+          <div class="type" data-type="Produto"><b>Produto</b><div class="hint">Materiais e itens de estoque</div></div>
+          <div class="type" data-type="Serviço"><b>Serviço</b><div class="hint">Serviços e dados fiscais</div></div>
+        </div>
+      </div>
 
-<section id="consulta" class="view"><div class="panel"><h2>Consultar protocolo</h2><div class="search"><input id="protocol" placeholder="CAD-2026-000123"><button class="btn primary" id="buscar">Consultar</button></div><div id="result" class="hidden"></div></div></section>
+      <input type="hidden" name="tipoCadastro" id="tipoCadastro" value="Parceiro">
 
-<section id="admin" class="view"><div class="grid2"><div class="panel"><h3>Painel administrativo</h3><label>Token</label><input type="password" id="token"><label style="margin-top:12px">Protocolo</label><input id="adminProtocol"><button class="btn" id="carregar" style="width:100%;margin-top:12px">Carregar</button></div><div class="panel"><div id="adminEmpty"><h3>Nenhuma solicitação carregada</h3></div><form id="adminForm" class="hidden"><div id="adminInfo" class="details"></div><div class="row" style="margin-top:16px"><div class="c4"><label>Status</label><select name="status"><option>Pendente</option><option>Em análise</option><option>Aprovado</option><option>Cadastrado</option><option>Devolvido</option><option>Recusado</option></select></div><div class="c4"><label>Código no sistema</label><input name="codigoSistema"></div><div class="c4"><label>Responsável</label><input name="responsavel"></div><div class="c12"><label>Retorno / Pendência</label><textarea name="retorno"></textarea></div></div><input type="hidden" name="protocolo"><button class="btn primary">Salvar atualização</button></form></div></div></section>
+      <fieldset id="parceiro" class="hidden">
+        <legend>2. Parceiro — Sankhya</legend>
+        <div class="row">
+          <div class="c4"><label>Tipo de pessoa</label><select name="tipoPessoa"><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div>
+          <div class="c8"><label>Razão social / Nome *</label><input name="razaoSocial" data-required="Parceiro"></div>
+          <div class="c6"><label>Nome fantasia</label><input name="nomeFantasia"></div>
+          <div class="c3"><label>CNPJ / CPF</label><input name="cnpjCpf"></div>
+          <div class="c3"><label>IE / RG</label><input name="inscricaoEstadual"></div>
+          <div class="c4"><label>Contribuinte ICMS</label><select name="contribuinteIcms"><option>Sim</option><option>Não</option><option>Não se aplica</option></select></div>
+          <div class="c4"><label>CEP</label><input id="cep" name="cep"></div>
+          <div class="c4"><label>Telefone</label><input name="telefone"></div>
+          <div class="c8"><label>Endereço</label><input name="endereco"></div>
+          <div class="c4"><label>Número</label><input name="numero"></div>
+          <div class="c4"><label>Bairro</label><input name="bairro"></div>
+          <div class="c4"><label>Cidade</label><input name="cidade"></div>
+          <div class="c4"><label>UF</label><input name="uf"></div>
+        </div>
+      </fieldset>
+
+      <fieldset id="produto" class="hidden">
+        <legend>2. Produto — Sankhya</legend>
+        <div class="row">
+          <div class="c8"><label>Descrição *</label><input name="descricaoProduto" data-required="Produto"></div>
+          <div class="c4"><label>Grupo</label><input name="grupoProduto"></div>
+          <div class="c3"><label>Unidade</label><select name="unidadePadrao"><option>UN</option><option>KG</option><option>CX</option><option>PC</option></select></div>
+          <div class="c3"><label>Marca</label><input name="marca"></div>
+          <div class="c3"><label>Referência</label><input name="referenciaFornecedor"></div>
+          <div class="c3"><label>NCM</label><input name="ncm"></div>
+          <div class="c4"><label>Controla estoque</label><select name="controlaEstoque"><option>Sim</option><option>Não</option></select></div>
+          <div class="c4"><label>Estoque mínimo</label><input name="estoqueMinimo"></div>
+          <div class="c4"><label>Fornecedor sugerido</label><input name="fornecedorProduto"></div>
+        </div>
+      </fieldset>
+
+      <fieldset id="servico" class="hidden">
+        <legend>2. Serviço — Sankhya</legend>
+        <div class="row">
+          <div class="c8"><label>Descrição *</label><input name="descricaoServico" data-required="Serviço"></div>
+          <div class="c4"><label>Grupo</label><input name="grupoServico"></div>
+          <div class="c3"><label>Unidade</label><select name="unidadeServico"><option>SV</option><option>UN</option><option>H</option><option>MÊS</option></select></div>
+          <div class="c3"><label>NCM / NBS</label><input name="ncmNbs"></div>
+          <div class="c3"><label>Cód. municipal</label><input name="codigoServicoMunicipio"></div>
+          <div class="c3"><label>ISS %</label><input name="iss"></div>
+          <div class="c4"><label>Retém impostos</label><select name="retemImpostos"><option>Sim</option><option>Não</option><option>Validar Fiscal</option></select></div>
+          <div class="c4"><label>Centro de Resultado</label><input name="centroResultado"></div>
+          <div class="c4"><label>Natureza</label><input name="natureza"></div>
+        </div>
+      </fieldset>
+
+      <fieldset id="insumo" class="hidden">
+        <legend>2. Insumo — Sienge</legend>
+        <div class="row">
+          <div class="c8"><label>Descrição *</label><input name="descricaoInsumo" data-required="Insumo"></div>
+          <div class="c4"><label>Unidade de medida *</label><select name="unidadeMedida"><option value="">Selecione...</option><option>UN</option><option>KG</option><option>M</option><option>M²</option><option>M³</option><option>L</option><option>CX</option><option>PCT</option><option>TON</option><option>H</option><option>VB</option></select></div>
+          <div class="c6"><label>Grupo de insumo *</label><input name="grupoInsumo"></div>
+          <div class="c6"><label>Conta financeira</label><input name="contaFinanceira" value="Insumo" readonly></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Complementos</legend>
+        <div class="row">
+          <div class="c12"><label>Observações</label><textarea name="observacoes"></textarea></div>
+          <div class="c12"><label>Link de anexo</label><input name="linkAnexo" placeholder="Cole aqui o link do documento no Drive, OneDrive ou outro local"></div>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" class="btn danger" id="limpar">Limpar rascunho</button>
+        <div>
+          <button type="button" class="btn" id="salvar">Salvar rascunho</button>
+          <button type="submit" class="btn primary">Enviar solicitação</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>
+        <h3>Histórico local — 7 dias</h3>
+        <p class="subtitle">Registros enviados por este navegador.</p>
+      </div>
+      <div>
+        <button class="btn" id="excel">Excel</button>
+        <button class="btn" id="pdf">PDF</button>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table class="table">
+        <thead><tr><th>Data</th><th>Protocolo</th><th>Sistema</th><th>Empresa</th><th>Tipo</th><th>Cadastro</th></tr></thead>
+        <tbody id="historicoBody"></tbody>
+      </table>
+    </div>
+  </div>
 </main>
-<div class="toast" id="toast"><b id="tt"></b><span id="tm"></span></div>
+
+<div class="toast" id="toast"><b id="toastTitulo"></b><span id="toastMensagem"></span></div>
+
 <script>
-const API="https://script.google.com/macros/s/AKfycbwNZ5BQzuX_oDwL1YUEabQ_46edjJm-k6bu-v_IEzC2KTtgCNtNjowoCi9khn7O8vkfRg/exec",DRAFT="cad_draft_v3",HISTORY="cad_history_v3";
-const form=document.getElementById("form");
-function toast(t,m){tt.textContent=t;tm.textContent=m;toastEl=document.getElementById("toast");toastEl.classList.add("show");setTimeout(()=>toastEl.classList.remove("show"),5000)}
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function dataForm(f){return Object.fromEntries(new FormData(f).entries())}
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===b.dataset.view));document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x===b));if(b.dataset.view==="dashboard")loadDashboard()});
-function setType(t){
-  tipoCadastro.value=t;
-  document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x.dataset.type===t));
-  parceiro.classList.toggle("hidden",t!=="Parceiro");
-  produto.classList.toggle("hidden",t!=="Produto");
-  servico.classList.toggle("hidden",t!=="Serviço");
-  insumo.classList.toggle("hidden",t!=="Insumo");
-  saveDraft();
+/* ==========================================================
+   CONFIGURAÇÃO EMAILJS
+   Substitua os três valores abaixo pelos dados da sua conta.
+   ========================================================== */
+const EMAILJS_PUBLIC_KEY = "COLE_SUA_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "COLE_SEU_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "COLE_SEU_TEMPLATE_ID";
+
+const EMAIL_AMANDA = "amanda.felisberto@areaincrivel.com.br";
+const EMAIL_LISANDRA = "lisandra.ferreira@grupomngt.com.br";
+const EMAIL_GUSTAVO = "gustavo.farias@areaincrivel.com.br";
+
+const DRAFT_KEY = "central_cadastros_email_draft_v1";
+const HISTORY_KEY = "central_cadastros_email_history_v1";
+const form = document.getElementById("cadastroForm");
+
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+function toast(titulo,mensagem){
+  toastTitulo.textContent=titulo;
+  toastMensagem.textContent=mensagem;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),5000);
 }
-function setSystem(s){
-  document.querySelectorAll(".type").forEach(x=>x.classList.toggle("hidden",x.dataset.system!==s));
-  if(s==="Sienge") setType("Insumo"); else setType(["Parceiro","Produto","Serviço"].includes(tipoCadastro.value)?tipoCadastro.value:"Parceiro");
+
+function dadosForm(){ return Object.fromEntries(new FormData(form).entries()); }
+
+function setType(tipo){
+  tipoCadastro.value=tipo;
+  document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x.dataset.type===tipo));
+  parceiro.classList.toggle("hidden",tipo!=="Parceiro");
+  produto.classList.toggle("hidden",tipo!=="Produto");
+  servico.classList.toggle("hidden",tipo!=="Serviço");
 }
+
 document.querySelectorAll(".type").forEach(x=>x.onclick=()=>setType(x.dataset.type));
-document.getElementById("sistema").addEventListener("change",e=>setSystem(e.target.value));
-function saveDraft(){localStorage.setItem(DRAFT,JSON.stringify(dataForm(form)))}form.addEventListener("input",()=>{clearTimeout(window.dt);window.dt=setTimeout(saveDraft,350)});
-salvar.onclick=()=>{saveDraft();toast("Rascunho salvo","Dados salvos neste navegador.")};limpar.onclick=()=>{if(confirm("Limpar?")){localStorage.removeItem(DRAFT);form.reset();setSystem("Sankhya");setType("Parceiro")}};
-function restore(){try{let d=JSON.parse(localStorage.getItem(DRAFT)||"null");if(!d)return;Object.entries(d).forEach(([k,v])=>{if(form.elements[k])form.elements[k].value=v});setSystem(d.sistema||"Sankhya");setType(d.tipoCadastro||((d.sistema||"Sankhya")==="Sienge"?"Insumo":"Parceiro"))}catch(e){}}
-async function file64(f){if(!f)return null;if(f.size>4*1024*1024)throw Error("Arquivo maior que 4 MB.");return new Promise((ok,no)=>{let r=new FileReader();r.onload=()=>ok({name:f.name,type:f.type,data:String(r.result).split(",")[1]});r.onerror=no;r.readAsDataURL(f)})}
-function post(payload){return new Promise(ok=>{let i=document.getElementById("target");if(!i){i=document.createElement("iframe");i.id=i.name="target";i.style.display="none";document.body.appendChild(i)}let f=document.createElement("form");f.method="POST";f.action=API;f.target="target";f.style.display="none";let x=document.createElement("input");x.name="payload";x.value=JSON.stringify(payload);f.appendChild(x);document.body.appendChild(f);let done=()=>{f.remove();ok()};i.onload=()=>setTimeout(done,300);f.submit();setTimeout(done,5000)})}
-function history(){let a=[];try{a=JSON.parse(localStorage.getItem(HISTORY)||"[]")}catch(e){}let l=Date.now()-7*86400000;a=a.filter(x=>new Date(x.date).getTime()>l);localStorage.setItem(HISTORY,JSON.stringify(a));return a}
-function desc(d){return d.tipoCadastro==="Parceiro"?(d.razaoSocial||d.nomeFantasia||""):d.tipoCadastro==="Produto"?(d.descricaoProduto||""):d.tipoCadastro==="Serviço"?(d.descricaoServico||""):(d.descricaoInsumo||"")}
-function renderHist(){hist.innerHTML=history().map(x=>`<tr><td>${new Date(x.date).toLocaleString("pt-BR")}</td><td>${esc(x.protocol)}</td><td>${esc(x.data.empresa)}</td><td>${esc(x.data.sistema||"")}</td><td>${esc(x.data.tipoCadastro)}</td><td>${esc(desc(x.data))}</td></tr>`).join("")}
-form.onsubmit=async e=>{e.preventDefault();let d=dataForm(form),req=form.querySelector(`[data-required="${d.tipoCadastro}"]`);if(req&&!req.value.trim()){req.focus();return toast("Campo obrigatório","Preencha o campo principal.")}let btn=e.submitter;btn.disabled=true;btn.textContent="Enviando...";try{d.action="create";d.protocoloLocal=`CAD-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;d.arquivo=await file64(arquivo.files[0]);await post(d);let a=history();a.unshift({date:new Date().toISOString(),protocol:d.protocoloLocal,data:d});localStorage.setItem(HISTORY,JSON.stringify(a));localStorage.removeItem(DRAFT);renderHist();form.reset();setSystem("Sankhya");setType("Parceiro");toast("Solicitação enviada",`Protocolo: ${d.protocoloLocal}`)}catch(err){saveDraft();toast("Erro",err.message)}finally{btn.disabled=false;btn.textContent="Enviar solicitação"}}
-function jsonp(p){return new Promise((ok,no)=>{let cb="cb"+Date.now()+Math.random().toString(16).slice(2),s=document.createElement("script");window[cb]=d=>{ok(d);delete window[cb];s.remove()};s.onerror=()=>no(Error("Falha na consulta."));s.src=API+"?"+new URLSearchParams({...p,callback:cb,_:Date.now()});document.body.appendChild(s);setTimeout(()=>{if(window[cb]){delete window[cb];s.remove();no(Error("Tempo excedido."))}},12000)})}
-function cls(s){s=String(s).toLowerCase();return s.includes("cadastrado")||s.includes("aprovado")?"done":s.includes("atrasado")||s.includes("recusado")||s.includes("devolvido")?"alert":"pending"}
-async function loadDashboard(){try{let r=await jsonp({action:"dashboard"}),d=r.data;if(!r.ok)throw Error(r.message);total.textContent=d.total;pend.textContent=d.pendentes;conc.textContent=d.concluidas;sla.textContent=d.slaPercent+"%";tempo.textContent=d.tempoMedioHoras+"h";let m=Math.max(1,...Object.values(d.porEmpresa));bars.innerHTML=Object.entries(d.porEmpresa).map(([k,v])=>`<div class="bar"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${v/m*100}%"></div></div><b>${v}</b></div>`).join("");alerts.innerHTML=d.alertas.length?d.alertas.map(x=>`<div class="chip alert" style="display:block;margin-bottom:8px">${esc(x)}</div>`).join(""):`<span class="chip done">Sem alertas críticos</span>`;dashRows.innerHTML=d.recentes.map(x=>`<tr><td>${esc(x.data)}</td><td>${esc(x.protocolo)}</td><td>${esc(x.empresa)}</td><td>${esc(x.sistema||"")}</td><td>${esc(x.tipo)}</td><td>${esc(x.solicitante)}</td><td>${esc(x.responsavel)}</td><td><span class="chip ${cls(x.status)}">${esc(x.status)}</span></td><td>${esc(x.sla)}</td></tr>`).join("")}catch(e){toast("Dashboard",e.message)}}refresh.onclick=loadDashboard;
-function renderResult(x,target){target.innerHTML=`<div class="details"><div class="detail"><span>Protocolo</span><b>${esc(x.protocolo)}</b></div><div class="detail"><span>Empresa</span><b>${esc(x.empresa)}</b></div><div class="detail"><span>Sistema</span><b>${esc(x.sistema||"")}</b></div><div class="detail"><span>Responsável</span><b>${esc(x.responsavel)}</b></div><div class="detail"><span>Status</span><b>${esc(x.status)}</b></div><div class="detail"><span>SLA</span><b>${esc(x.sla)}</b></div><div class="detail"><span>Código no sistema</span><b>${esc(x.codigoSistema||"-")}</b></div></div><div class="timeline">${x.historico.map(h=>`<div><b>${esc(h.status)}</b><small>${esc(h.data)} — ${esc(h.usuario)}</small><p class="hint">${esc(h.observacao)}</p></div>`).join("")}</div>`;target.classList.remove("hidden")}
-buscar.onclick=async()=>{try{let r=await jsonp({action:"protocol",protocol:protocol.value.trim()});if(!r.ok)throw Error(r.message);renderResult(r.data,result)}catch(e){toast("Consulta",e.message)}}
-carregar.onclick=async()=>{try{let r=await jsonp({action:"adminProtocol",protocol:adminProtocol.value.trim(),token:token.value});if(!r.ok)throw Error(r.message);adminEmpty.classList.add("hidden");adminForm.classList.remove("hidden");let x=r.data;adminForm.elements.protocolo.value=x.protocolo;adminForm.elements.status.value=x.status;adminForm.elements.responsavel.value=x.responsavel;adminInfo.innerHTML=`<div class="detail"><span>Empresa</span><b>${esc(x.empresa)}</b></div><div class="detail"><span>Sistema</span><b>${esc(x.sistema||"")}</b></div><div class="detail"><span>Tipo</span><b>${esc(x.tipo)}</b></div><div class="detail"><span>Solicitante</span><b>${esc(x.solicitante)}</b></div>`}catch(e){toast("Admin",e.message)}}
-adminForm.onsubmit=async e=>{e.preventDefault();let d=dataForm(adminForm);d.action="updateStatus";d.token=token.value;await post(d);toast("Atualização enviada","Status enviado para a planilha.");setTimeout(()=>carregar.click(),1500)}
-excel.onclick=()=>{let rows=history().map(x=>({Data:new Date(x.date).toLocaleString("pt-BR"),Protocolo:x.protocol,Empresa:x.data.empresa,Sistema:x.data.sistema||"",Tipo:x.data.tipoCadastro,Cadastro:desc(x.data)}));if(!rows.length)return toast("Sem dados","Nada para exportar.");let ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Cadastros");XLSX.writeFile(wb,"cadastros_7_dias.xlsx")}
-pdf.onclick=()=>{let rows=history();if(!rows.length)return toast("Sem dados","Nada para exportar.");let{jsPDF}=window.jspdf,doc=new jsPDF({orientation:"landscape"});doc.text("Cadastros dos últimos 7 dias",14,16);doc.autoTable({startY:22,head:[["Data","Protocolo","Empresa","Sistema","Tipo","Cadastro"]],body:rows.map(x=>[new Date(x.date).toLocaleString("pt-BR"),x.protocol,x.data.empresa,x.data.sistema||"",x.data.tipoCadastro,desc(x.data)])});doc.save("cadastros_7_dias.pdf")}
-cep.onblur=async()=>{let c=cep.value.replace(/\D/g,"");if(c.length!==8)return;try{let j=await(await fetch(`https://viacep.com.br/ws/${c}/json/`)).json();if(!j.erro){form.elements.endereco.value=j.logradouro||"";form.elements.bairro.value=j.bairro||"";form.elements.cidade.value=j.localidade||"";form.elements.uf.value=j.uf||""}}catch(e){}}
-restore();setSystem(form.elements.sistema.value||"Sankhya");renderHist();
+
+sistema.onchange=()=>{
+  const s=sistema.value;
+  sankhyaArea.classList.toggle("hidden",s!=="Sankhya");
+  insumo.classList.toggle("hidden",s!=="Sienge");
+
+  if(s==="Sankhya") setType("Parceiro");
+  else if(s==="Sienge"){
+    parceiro.classList.add("hidden");
+    produto.classList.add("hidden");
+    servico.classList.add("hidden");
+    tipoCadastro.value="Insumo";
+  }else{
+    parceiro.classList.add("hidden");
+    produto.classList.add("hidden");
+    servico.classList.add("hidden");
+    insumo.classList.add("hidden");
+  }
+  salvarRascunho();
+};
+
+function salvarRascunho(){
+  localStorage.setItem(DRAFT_KEY,JSON.stringify(dadosForm()));
+}
+
+form.addEventListener("input",()=>{
+  clearTimeout(window.rascunhoTimer);
+  window.rascunhoTimer=setTimeout(salvarRascunho,350);
+});
+
+salvar.onclick=()=>{ salvarRascunho(); toast("Rascunho salvo","Os dados foram salvos neste navegador."); };
+
+limpar.onclick=()=>{
+  if(confirm("Deseja limpar o rascunho?")){
+    localStorage.removeItem(DRAFT_KEY);
+    form.reset();
+    sankhyaArea.classList.add("hidden");
+    parceiro.classList.add("hidden");
+    produto.classList.add("hidden");
+    servico.classList.add("hidden");
+    insumo.classList.add("hidden");
+    tipoCadastro.value="Parceiro";
+  }
+};
+
+function restaurarRascunho(){
+  try{
+    const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");
+    if(!d)return;
+    Object.entries(d).forEach(([k,v])=>{ if(form.elements[k]) form.elements[k].value=v; });
+    sistema.dispatchEvent(new Event("change"));
+    if(d.sistema==="Sankhya") setType(d.tipoCadastro||"Parceiro");
+  }catch(e){}
+}
+
+function destinoResponsavel(d){
+  if(d.sistema==="Sienge") return {nome:"Amanda Felisberto",email:EMAIL_AMANDA};
+  if(d.sistema==="Sankhya" && d.empresa==="Área Incrível") return {nome:"Amanda Felisberto",email:EMAIL_AMANDA};
+  if(d.sistema==="Sankhya" && (d.empresa==="A10" || d.empresa==="M2LOG")) return {nome:"Lisandra Ferreira",email:EMAIL_LISANDRA};
+  throw new Error("Não existe responsável configurado para essa combinação.");
+}
+
+function descricaoCadastro(d){
+  if(d.tipoCadastro==="Parceiro") return d.razaoSocial||d.nomeFantasia||d.cnpjCpf||"";
+  if(d.tipoCadastro==="Produto") return d.descricaoProduto||d.grupoProduto||"";
+  if(d.tipoCadastro==="Serviço") return d.descricaoServico||d.grupoServico||"";
+  return d.descricaoInsumo||d.grupoInsumo||"";
+}
+
+function gerarTabelaEmail(d,protocolo,responsavel){
+  const linhas=[
+    ["Protocolo",protocolo],
+    ["Sistema",d.sistema],
+    ["Empresa",d.empresa],
+    ["Tipo de cadastro",d.tipoCadastro],
+    ["Cadastro solicitado",descricaoCadastro(d)],
+    ["Solicitante",d.solicitante],
+    ["E-mail do solicitante",d.emailSolicitante],
+    ["Departamento",d.departamento||"Não informado"],
+    ["Prioridade",d.prioridade],
+    ["Responsável",responsavel.nome],
+    ["Observações",d.observacoes||"Não informado"],
+    ["Anexo",d.linkAnexo||"Não informado"]
+  ];
+  return linhas.map(([a,b])=>`${a}: ${b}`).join("\n");
+}
+
+async function enviarEmail(toEmail,toName,d,protocolo,responsavel){
+  const params={
+    to_email:toEmail,
+    to_name:toName,
+    subject:`[Central de Cadastros] ${protocolo} — ${d.sistema} / ${d.empresa} / ${d.tipoCadastro}`,
+    protocolo,
+    sistema:d.sistema,
+    empresa:d.empresa,
+    tipo_cadastro:d.tipoCadastro,
+    cadastro_solicitado:descricaoCadastro(d),
+    solicitante:d.solicitante,
+    email_solicitante:d.emailSolicitante,
+    departamento:d.departamento||"Não informado",
+    prioridade:d.prioridade,
+    responsavel:responsavel.nome,
+    observacoes:d.observacoes||"Não informado",
+    link_anexo:d.linkAnexo||"Não informado",
+    message:gerarTabelaEmail(d,protocolo,responsavel)
+  };
+  return emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,params);
+}
+
+function obterHistorico(){
+  let arr=[];
+  try{arr=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch(e){}
+  const limite=Date.now()-7*86400000;
+  arr=arr.filter(x=>new Date(x.dataEnvio).getTime()>=limite);
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(arr));
+  return arr;
+}
+
+function registrarHistorico(d,protocolo){
+  const arr=obterHistorico();
+  arr.unshift({dataEnvio:new Date().toISOString(),protocolo,dados:d});
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(arr));
+  renderizarHistorico();
+}
+
+function renderizarHistorico(){
+  historicoBody.innerHTML=obterHistorico().map(x=>`<tr>
+    <td>${new Date(x.dataEnvio).toLocaleString("pt-BR")}</td>
+    <td>${x.protocolo}</td>
+    <td>${x.dados.sistema}</td>
+    <td>${x.dados.empresa}</td>
+    <td>${x.dados.tipoCadastro}</td>
+    <td>${descricaoCadastro(x.dados)}</td>
+  </tr>`).join("");
+}
+
+form.onsubmit=async e=>{
+  e.preventDefault();
+  const d=dadosForm();
+  const principal=form.querySelector(`[data-required="${d.tipoCadastro}"]`);
+
+  if(principal && !principal.value.trim()){
+    principal.focus();
+    return toast("Campo obrigatório","Preencha o campo principal do cadastro.");
+  }
+
+  if(
+    EMAILJS_PUBLIC_KEY.includes("COLE_") ||
+    EMAILJS_SERVICE_ID.includes("COLE_") ||
+    EMAILJS_TEMPLATE_ID.includes("COLE_")
+  ){
+    return toast("EmailJS não configurado","Preencha Public Key, Service ID e Template ID no código.");
+  }
+
+  const btn=e.submitter;
+  btn.disabled=true;
+  btn.textContent="Enviando...";
+
+  try{
+    const responsavel=destinoResponsavel(d);
+    const protocolo=`CAD-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
+
+    await enviarEmail(responsavel.email,responsavel.nome,d,protocolo,responsavel);
+    await enviarEmail(EMAIL_GUSTAVO,"Gustavo Farias",d,protocolo,responsavel);
+
+    registrarHistorico(d,protocolo);
+    localStorage.removeItem(DRAFT_KEY);
+    form.reset();
+    sistema.dispatchEvent(new Event("change"));
+
+    toast("Solicitação enviada",`Protocolo: ${protocolo}`);
+  }catch(err){
+    salvarRascunho();
+    toast("Falha no envio",err?.text||err?.message||"Não foi possível enviar o e-mail.");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Enviar solicitação";
+  }
+};
+
+excel.onclick=()=>{
+  const rows=obterHistorico().map(x=>({
+    Data:new Date(x.dataEnvio).toLocaleString("pt-BR"),
+    Protocolo:x.protocolo,
+    Sistema:x.dados.sistema,
+    Empresa:x.dados.empresa,
+    Tipo:x.dados.tipoCadastro,
+    Cadastro:descricaoCadastro(x.dados),
+    Solicitante:x.dados.solicitante,
+    Prioridade:x.dados.prioridade
+  }));
+  if(!rows.length)return toast("Sem dados","Nada para exportar.");
+  const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Cadastros");
+  XLSX.writeFile(wb,"cadastros_7_dias.xlsx");
+};
+
+pdf.onclick=()=>{
+  const rows=obterHistorico();
+  if(!rows.length)return toast("Sem dados","Nada para exportar.");
+  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:"landscape"});
+  doc.text("Cadastros dos últimos 7 dias",14,16);
+  doc.autoTable({
+    startY:22,
+    head:[["Data","Protocolo","Sistema","Empresa","Tipo","Cadastro"]],
+    body:rows.map(x=>[
+      new Date(x.dataEnvio).toLocaleString("pt-BR"),
+      x.protocolo,
+      x.dados.sistema,
+      x.dados.empresa,
+      x.dados.tipoCadastro,
+      descricaoCadastro(x.dados)
+    ])
+  });
+  doc.save("cadastros_7_dias.pdf");
+};
+
+cep.onblur=async()=>{
+  const c=cep.value.replace(/\D/g,"");
+  if(c.length!==8)return;
+  try{
+    const j=await(await fetch(`https://viacep.com.br/ws/${c}/json/`)).json();
+    if(!j.erro){
+      form.elements.endereco.value=j.logradouro||"";
+      form.elements.bairro.value=j.bairro||"";
+      form.elements.cidade.value=j.localidade||"";
+      form.elements.uf.value=j.uf||"";
+    }
+  }catch(e){}
+};
+
+window.addEventListener("online",()=>netStatus.textContent="● Conectado");
+window.addEventListener("offline",()=>netStatus.textContent="● Offline");
+
+restaurarRascunho();
+renderizarHistorico();
 </script>
 </body>
 </html>
