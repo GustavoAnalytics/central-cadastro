@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Central de Cadastros | Sankhya e Sienge</title>
+<title>Central Corporativa de Cadastros | Sankhya e Sienge</title>
+<meta name="description" content="Central corporativa para solicitações completas de cadastro de parceiros, produtos, serviços e insumos.">
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -11,19 +12,24 @@
 
 <style>
 :root{
-  --bg:#06101d;--panel:#102039;--line:#29415f;--text:#f8fafc;--muted:#a9b7c9;
-  --green:#34d399;--blue:#38bdf8;--red:#fb7185;--yellow:#fbbf24;
+  --bg:#06101d;--panel:#102039;--panel2:#0a1729;--line:#29415f;--text:#f8fafc;
+  --muted:#a9b7c9;--green:#34d399;--blue:#38bdf8;--red:#fb7185;--yellow:#fbbf24;
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{
   margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;
   background:radial-gradient(circle at top left,#123b65,#071321 42%,#040914);
   color:var(--text);min-height:100vh
 }
-header,main{max-width:1180px;margin:auto}
+header,main{max-width:1240px;margin:auto}
 header{padding:28px 22px 12px;display:flex;justify-content:space-between;gap:18px;align-items:center}
 .brand{display:flex;gap:14px;align-items:center}
-.logo{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--green),var(--blue));display:grid;place-items:center;color:#04111e;font-weight:1000}
+.logo{
+  width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--green),var(--blue));
+  display:grid;place-items:center;color:#04111e;font-weight:1000
+}
+h1,h2,h3,h4,p{margin-top:0}
 .subtitle,.hint{color:var(--muted);line-height:1.5}
 main{padding:18px 22px 48px}
 .panel{
@@ -33,31 +39,105 @@ main{padding:18px 22px 48px}
 }
 .grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
 .types{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
-.type{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:17px;cursor:pointer;background:rgba(255,255,255,.04)}
-.type.active{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.1)}
-fieldset{border:0;padding:0;margin:0 0 24px}
-legend{font-size:18px;font-weight:950;margin-bottom:14px}
+.type{
+  padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:17px;cursor:pointer;
+  background:rgba(255,255,255,.04);transition:.2s transform,.2s border-color,.2s background
+}
+.type:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.45)}
+.type.active{border-color:rgba(52,211,153,.6);background:rgba(52,211,153,.12)}
+fieldset{border:0;padding:0;margin:0 0 28px}
+legend{font-size:19px;font-weight:950;margin-bottom:7px}
+.section-note{
+  color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 16px;
+  border-left:3px solid rgba(56,189,248,.55);padding-left:12px
+}
 .row{display:grid;grid-template-columns:repeat(12,1fr);gap:13px}
-.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
-label{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;color:var(--muted)}
+.c12{grid-column:span 12}.c9{grid-column:span 9}.c8{grid-column:span 8}
+.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
+label{
+  display:block;font-size:11px;font-weight:900;text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:7px;color:var(--muted)
+}
 input,select,textarea{
   width:100%;background:rgba(3,10,20,.75);border:1px solid rgba(255,255,255,.13);
-  color:var(--text);border-radius:14px;padding:13px;outline:none
+  color:var(--text);border-radius:14px;padding:13px;outline:none;transition:.2s
 }
-textarea{min-height:100px}
+input:focus,select:focus,textarea:focus{
+  border-color:rgba(56,189,248,.7);box-shadow:0 0 0 3px rgba(56,189,248,.1)
+}
+textarea{min-height:105px;resize:vertical}
+option{background:#071321}
 .hidden{display:none!important}
-.actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:18px}
-.btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);padding:11px 15px;border-radius:13px;font-weight:900;cursor:pointer}
+.divider{height:1px;background:rgba(255,255,255,.09);margin:6px 0 24px}
+.actions{
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  border-top:1px solid rgba(255,255,255,.1);padding-top:18px
+}
+.btn{
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);
+  color:var(--text);padding:11px 15px;border-radius:13px;font-weight:900;cursor:pointer
+}
 .btn.primary{background:linear-gradient(135deg,var(--green),var(--blue));color:#04111e;border:0}
 .btn.danger{color:#fecdd3;border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.1)}
+.btn.small{padding:8px 11px;font-size:12px}
 .btn:disabled{opacity:.6;cursor:not-allowed}
+.preview{
+  margin:0 0 22px;border:1px solid rgba(56,189,248,.25);background:rgba(56,189,248,.055);
+  border-radius:20px;padding:18px
+}
+.preview-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+.badge{
+  display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;
+  background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);
+  color:#a7f3d0;font-size:12px;font-weight:850
+}
+.detail-section{
+  border:1px solid rgba(255,255,255,.09);background:rgba(3,10,20,.35);
+  border-radius:16px;padding:14px;margin-top:12px
+}
+.detail-section h4{margin-bottom:11px;font-size:14px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 16px}
+.detail-item{min-width:0}
+.detail-item b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.detail-item span{display:block;word-break:break-word;line-height:1.45}
 .tablewrap{overflow:auto;border:1px solid rgba(255,255,255,.1);border-radius:16px}
-.table{width:100%;border-collapse:collapse;min-width:850px}
-.table th,.table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;text-align:left}
-.table th{background:#0b1b31}
-.toast{position:fixed;right:18px;bottom:18px;max-width:430px;padding:15px 17px;border:1px solid rgba(52,211,153,.35);background:#06111f;border-radius:16px;display:none}
+.table{width:100%;border-collapse:collapse;min-width:1050px}
+.table th,.table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;text-align:left;vertical-align:top}
+.table th{background:#0b1b31;position:sticky;top:0;z-index:1}
+.empty{text-align:center;color:var(--muted);padding:28px!important}
+.toast{
+  position:fixed;right:18px;bottom:18px;max-width:460px;padding:15px 17px;
+  border:1px solid rgba(52,211,153,.35);background:#06111f;border-radius:16px;display:none;
+  z-index:1001;box-shadow:0 20px 50px rgba(0,0,0,.4)
+}
 .toast.show{display:block}.toast b{display:block;margin-bottom:4px}
-@media(max-width:900px){.grid2{grid-template-columns:1fr}.c8,.c6,.c4,.c3{grid-column:span 12}.types{grid-template-columns:1fr}}
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;
+  justify-content:center;padding:20px;z-index:1000
+}
+.modal.show{display:flex}
+.modal-card{
+  width:min(980px,100%);max-height:90vh;overflow:auto;background:#081626;
+  border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:22px;
+  box-shadow:0 30px 100px rgba(0,0,0,.65)
+}
+.modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}
+.close{
+  width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.07);color:white;font-size:20px;cursor:pointer
+}
+.required-note{font-size:12px;color:var(--muted);margin-bottom:18px}
+.kpi-line{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.kpi{padding:9px 12px;border-radius:13px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.kpi b{display:block;font-size:18px}
+.kpi span{font-size:11px;color:var(--muted)}
+@media(max-width:900px){
+  .grid2{grid-template-columns:1fr}
+  .c9,.c8,.c6,.c4,.c3{grid-column:span 12}
+  .types{grid-template-columns:1fr}
+  .detail-grid{grid-template-columns:1fr}
+  header{align-items:flex-start;flex-direction:column}
+}
 </style>
 </head>
 
@@ -67,7 +147,7 @@ textarea{min-height:100px}
     <div class="logo">CF</div>
     <div>
       <h1>Central Corporativa de Cadastros</h1>
-      <p class="subtitle">Solicitações de cadastro para Sankhya e Sienge, com registro único e comunicação automatizada.</p>
+      <p class="subtitle">Solicitações completas para Sankhya e Sienge, com histórico detalhado e comunicação automatizada.</p>
     </div>
   </div>
   <div id="netStatus">● Conectado</div>
@@ -76,15 +156,20 @@ textarea{min-height:100px}
 <main>
   <div class="grid2">
     <div class="panel">
-      <h2>Solicitação centralizada</h2>
-      <p class="subtitle">Cada solicitação é registrada uma única vez. Gustavo recebe o cadastro imediatamente e os responsáveis recebem um resumo consolidado a cada dois dias.</p>
+      <h2>Cadastro completo e centralizado</h2>
+      <p class="subtitle">O formulário apresenta somente os campos necessários para cada tipo de cadastro e gera um resumo completo antes do envio.</p>
+      <div class="kpi-line">
+        <div class="kpi"><b>4</b><span>tipos de cadastro</span></div>
+        <div class="kpi"><b>1</b><span>registro por solicitação</span></div>
+        <div class="kpi"><b>7 dias</b><span>de histórico local</span></div>
+      </div>
     </div>
     <div class="panel">
       <b>Fluxo de comunicação</b>
       <p class="hint">
-        Cada novo cadastro → Gustavo Farias imediatamente<br>
-        Resumo de Sienge e Sankhya / Área Incrível → Amanda, a cada 2 dias<br>
-        Resumo de Sankhya / A10 e M2LOG → Lisandra, a cada 2 dias<br>
+        Cada cadastro → Gustavo imediatamente, com todos os dados<br>
+        Área Incrível e Sienge → resumo da Amanda a cada 2 dias<br>
+        A10 e M2LOG → resumo da Lisandra a cada 2 dias<br>
         Proteção contra clique duplo e reenvio duplicado
       </p>
     </div>
@@ -93,9 +178,10 @@ textarea{min-height:100px}
   <div class="panel" style="margin-top:18px">
     <form id="cadastroForm">
       <fieldset>
-        <legend>1. Identificação</legend>
+        <legend>1. Identificação da solicitação</legend>
+        <p class="section-note">Informe quem está solicitando, para qual empresa e quando o cadastro será necessário.</p>
         <div class="row">
-          <div class="c4">
+          <div class="c3">
             <label>Sistema *</label>
             <select name="sistema" id="sistema" required>
               <option value="">Selecione...</option>
@@ -103,7 +189,7 @@ textarea{min-height:100px}
               <option value="Sienge">Sienge</option>
             </select>
           </div>
-          <div class="c4">
+          <div class="c3">
             <label>Empresa *</label>
             <select name="empresa" required>
               <option value="">Selecione...</option>
@@ -112,118 +198,226 @@ textarea{min-height:100px}
               <option value="M2LOG">M2LOG</option>
             </select>
           </div>
-          <div class="c4">
-            <label>Solicitante *</label>
-            <input name="solicitante" required>
-          </div>
-          <div class="c4">
-            <label>E-mail *</label>
-            <input name="emailSolicitante" type="email" required>
-          </div>
-          <div class="c4">
-            <label>Departamento</label>
-            <input name="departamento">
-          </div>
-          <div class="c4">
-            <label>Prioridade</label>
-            <select name="prioridade">
-              <option>Baixa</option>
-              <option selected>Média</option>
-              <option>Alta</option>
-              <option>Urgente</option>
-            </select>
-          </div>
+          <div class="c3"><label>Unidade / Filial</label><input name="unidadeFilial" placeholder="Ex.: Matriz, Obra, Unidade"></div>
+          <div class="c3"><label>Prioridade *</label><select name="prioridade"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Urgente</option></select></div>
+
+          <div class="c4"><label>Solicitante *</label><input name="solicitante" required></div>
+          <div class="c4"><label>E-mail do solicitante *</label><input name="emailSolicitante" type="email" required></div>
+          <div class="c4"><label>Telefone / Ramal</label><input name="telefoneSolicitante"></div>
+
+          <div class="c4"><label>Departamento</label><input name="departamento"></div>
+          <div class="c4"><label>Cargo / Função</label><input name="cargoSolicitante"></div>
+          <div class="c4"><label>Data necessária</label><input name="dataNecessidade" type="date"></div>
+
+          <div class="c12"><label>Motivo da solicitação</label><textarea name="motivoSolicitacao" placeholder="Explique por que o cadastro é necessário e em qual processo será utilizado."></textarea></div>
         </div>
       </fieldset>
 
       <div id="sankhyaArea">
         <div class="types">
-          <div class="type active" data-type="Parceiro"><b>Parceiro</b><div class="hint">Fornecedor, cliente ou prestador</div></div>
-          <div class="type" data-type="Produto"><b>Produto</b><div class="hint">Materiais e itens de estoque</div></div>
-          <div class="type" data-type="Serviço"><b>Serviço</b><div class="hint">Serviços e dados fiscais</div></div>
+          <div class="type active" data-type="Parceiro"><b>Parceiro</b><div class="hint">Fornecedor, cliente, prestador ou transportadora</div></div>
+          <div class="type" data-type="Produto"><b>Produto</b><div class="hint">Material, mercadoria, ativo ou item de estoque</div></div>
+          <div class="type" data-type="Serviço"><b>Serviço</b><div class="hint">Serviço contratado, vendido ou recorrente</div></div>
         </div>
       </div>
 
       <input type="hidden" name="tipoCadastro" id="tipoCadastro" value="Parceiro">
 
       <fieldset id="parceiro">
-        <legend>2. Parceiro — Sankhya</legend>
+        <legend>2. Dados do parceiro — Sankhya</legend>
+        <p class="section-note">Preencha dados cadastrais, fiscais, contatos, endereço, pagamento e dados bancários disponíveis.</p>
         <div class="row">
-          <div class="c4"><label>Tipo de pessoa</label><select name="tipoPessoa"><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div>
-          <div class="c8"><label>Razão social / Nome *</label><input name="razaoSocial" data-required="Parceiro"></div>
+          <div class="c3"><label>Categoria do parceiro *</label><select name="categoriaParceiro" data-required="Parceiro"><option value="">Selecione...</option><option>Fornecedor</option><option>Cliente</option><option>Prestador de serviço</option><option>Transportadora</option><option>Colaborador</option><option>Outro</option></select></div>
+          <div class="c3"><label>Tipo de pessoa *</label><select name="tipoPessoa" data-required="Parceiro"><option value="">Selecione...</option><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div>
+          <div class="c6"><label>Razão social / Nome completo *</label><input name="razaoSocial" data-required="Parceiro"></div>
+
           <div class="c6"><label>Nome fantasia</label><input name="nomeFantasia"></div>
-          <div class="c3"><label>CNPJ / CPF</label><input name="cnpjCpf"></div>
+          <div class="c3"><label>CNPJ / CPF *</label><input name="cnpjCpf" data-required="Parceiro"></div>
           <div class="c3"><label>IE / RG</label><input name="inscricaoEstadual"></div>
-          <div class="c4"><label>Contribuinte ICMS</label><select name="contribuinteIcms"><option>Sim</option><option>Não</option><option>Não se aplica</option></select></div>
-          <div class="c4"><label>CEP</label><input id="cep" name="cep"></div>
+
+          <div class="c3"><label>Inscrição municipal</label><input name="inscricaoMunicipal"></div>
+          <div class="c3"><label>Regime tributário</label><select name="regimeTributario"><option value="">Selecione...</option><option>Simples Nacional</option><option>Lucro Presumido</option><option>Lucro Real</option><option>MEI</option><option>Isento / Não se aplica</option></select></div>
+          <div class="c3"><label>Contribuinte ICMS</label><select name="contribuinteIcms"><option value="">Selecione...</option><option>Sim</option><option>Não</option><option>Isento</option><option>Não se aplica</option></select></div>
+          <div class="c3"><label>Optante Simples Nacional</label><select name="optanteSimples"><option value="">Selecione...</option><option>Sim</option><option>Não</option><option>Não se aplica</option></select></div>
+
+          <div class="c4"><label>Contato principal</label><input name="contatoPrincipal"></div>
           <div class="c4"><label>Telefone</label><input name="telefone"></div>
-          <div class="c8"><label>Endereço</label><input name="endereco"></div>
-          <div class="c4"><label>Número</label><input name="numero"></div>
+          <div class="c4"><label>Celular / WhatsApp</label><input name="celular"></div>
+
+          <div class="c4"><label>E-mail comercial</label><input name="emailComercial" type="email"></div>
+          <div class="c4"><label>E-mail fiscal</label><input name="emailFiscal" type="email"></div>
+          <div class="c4"><label>E-mail financeiro</label><input name="emailFinanceiro" type="email"></div>
+
+          <div class="c3"><label>CEP</label><input id="cep" name="cep"></div>
+          <div class="c6"><label>Endereço</label><input name="endereco"></div>
+          <div class="c3"><label>Número</label><input name="numero"></div>
+
+          <div class="c4"><label>Complemento</label><input name="complemento"></div>
           <div class="c4"><label>Bairro</label><input name="bairro"></div>
           <div class="c4"><label>Cidade</label><input name="cidade"></div>
-          <div class="c4"><label>UF</label><input name="uf"></div>
+
+          <div class="c3"><label>UF</label><input name="uf" maxlength="2"></div>
+          <div class="c3"><label>País</label><input name="pais" value="Brasil"></div>
+          <div class="c3"><label>Condição de pagamento</label><input name="condicaoPagamentoParceiro"></div>
+          <div class="c3"><label>Limite de crédito</label><input name="limiteCredito" type="number" step="0.01"></div>
+
+          <div class="c3"><label>Banco</label><input name="banco"></div>
+          <div class="c3"><label>Agência</label><input name="agencia"></div>
+          <div class="c3"><label>Conta / Tipo</label><input name="contaBancaria"></div>
+          <div class="c3"><label>Chave PIX</label><input name="chavePix"></div>
+
+          <div class="c6"><label>Favorecido da conta</label><input name="favorecidoConta"></div>
+          <div class="c6"><label>Categoria / Grupo sugerido</label><input name="grupoParceiro"></div>
         </div>
       </fieldset>
 
       <fieldset id="produto" class="hidden">
-        <legend>2. Produto — Sankhya</legend>
+        <legend>2. Dados do produto — Sankhya</legend>
+        <p class="section-note">Inclua especificações comerciais, fiscais, logísticas e de controle de estoque para evitar cadastro incompleto.</p>
         <div class="row">
-          <div class="c8"><label>Descrição *</label><input name="descricaoProduto" data-required="Produto"></div>
-          <div class="c4"><label>Grupo</label><input name="grupoProduto"></div>
-          <div class="c3"><label>Unidade</label><select name="unidadePadrao"><option>UN</option><option>KG</option><option>CX</option><option>PC</option></select></div>
+          <div class="c8"><label>Descrição completa *</label><input name="descricaoProduto" data-required="Produto"></div>
+          <div class="c4"><label>Descrição reduzida</label><input name="descricaoReduzidaProduto"></div>
+
+          <div class="c4"><label>Grupo de produto *</label><input name="grupoProduto" data-required="Produto"></div>
+          <div class="c4"><label>Subgrupo</label><input name="subgrupoProduto"></div>
+          <div class="c4"><label>Tipo de utilização</label><select name="tipoUtilizacaoProduto"><option value="">Selecione...</option><option>Uso e consumo</option><option>Revenda</option><option>Matéria-prima</option><option>Embalagem</option><option>Ativo imobilizado</option><option>Produto acabado</option><option>Outro</option></select></div>
+
+          <div class="c3"><label>Unidade padrão *</label><select name="unidadePadrao" data-required="Produto"><option value="">Selecione...</option><option>UN</option><option>KG</option><option>G</option><option>TON</option><option>CX</option><option>PC</option><option>PCT</option><option>M</option><option>M²</option><option>M³</option><option>L</option><option>ML</option><option>PAR</option><option>JOGO</option></select></div>
+          <div class="c3"><label>Unidade de compra</label><input name="unidadeCompra"></div>
+          <div class="c3"><label>Fator de conversão</label><input name="fatorConversao" type="number" step="0.0001"></div>
+          <div class="c3"><label>Código de barras / EAN</label><input name="codigoBarras"></div>
+
           <div class="c3"><label>Marca</label><input name="marca"></div>
-          <div class="c3"><label>Referência</label><input name="referenciaFornecedor"></div>
-          <div class="c3"><label>NCM</label><input name="ncm"></div>
-          <div class="c4"><label>Controla estoque</label><select name="controlaEstoque"><option>Sim</option><option>Não</option></select></div>
-          <div class="c4"><label>Estoque mínimo</label><input name="estoqueMinimo"></div>
-          <div class="c4"><label>Fornecedor sugerido</label><input name="fornecedorProduto"></div>
+          <div class="c3"><label>Modelo</label><input name="modeloProduto"></div>
+          <div class="c3"><label>Fabricante</label><input name="fabricanteProduto"></div>
+          <div class="c3"><label>Referência do fabricante</label><input name="referenciaFornecedor"></div>
+
+          <div class="c3"><label>NCM *</label><input name="ncm" data-required="Produto"></div>
+          <div class="c3"><label>CEST</label><input name="cest"></div>
+          <div class="c3"><label>Origem da mercadoria</label><select name="origemMercadoria"><option value="">Selecione...</option><option>0 - Nacional</option><option>1 - Estrangeira importação direta</option><option>2 - Estrangeira mercado interno</option><option>3 - Nacional, conteúdo importado superior a 40%</option><option>Outras origens</option></select></div>
+          <div class="c3"><label>Classificação fiscal adicional</label><input name="classificacaoFiscalProduto"></div>
+
+          <div class="c3"><label>Controla estoque *</label><select name="controlaEstoque" data-required="Produto"><option value="">Selecione...</option><option>Sim</option><option>Não</option></select></div>
+          <div class="c3"><label>Controla lote</label><select name="controlaLote"><option value="">Selecione...</option><option>Sim</option><option>Não</option></select></div>
+          <div class="c3"><label>Controla validade</label><select name="controlaValidade"><option value="">Selecione...</option><option>Sim</option><option>Não</option></select></div>
+          <div class="c3"><label>Controla número de série</label><select name="controlaSerie"><option value="">Selecione...</option><option>Sim</option><option>Não</option></select></div>
+
+          <div class="c3"><label>Estoque mínimo</label><input name="estoqueMinimo" type="number" step="0.0001"></div>
+          <div class="c3"><label>Estoque máximo</label><input name="estoqueMaximo" type="number" step="0.0001"></div>
+          <div class="c3"><label>Local padrão</label><input name="localEstoquePadrao"></div>
+          <div class="c3"><label>Dias de validade</label><input name="diasValidade" type="number"></div>
+
+          <div class="c3"><label>Peso líquido (kg)</label><input name="pesoLiquido" type="number" step="0.001"></div>
+          <div class="c3"><label>Peso bruto (kg)</label><input name="pesoBruto" type="number" step="0.001"></div>
+          <div class="c3"><label>Dimensões</label><input name="dimensoesProduto" placeholder="C x L x A"></div>
+          <div class="c3"><label>Valor estimado</label><input name="valorEstimadoProduto" type="number" step="0.01"></div>
+
+          <div class="c6"><label>Fornecedor sugerido</label><input name="fornecedorProduto"></div>
+          <div class="c6"><label>Aplicação / Onde será utilizado</label><input name="aplicacaoProduto"></div>
+
+          <div class="c12"><label>Especificação técnica</label><textarea name="especificacaoTecnicaProduto" placeholder="Material, medidas, resistência, acabamento, composição, tolerâncias e demais requisitos."></textarea></div>
         </div>
       </fieldset>
 
       <fieldset id="servico" class="hidden">
-        <legend>2. Serviço — Sankhya</legend>
+        <legend>2. Dados do serviço — Sankhya</legend>
+        <p class="section-note">Informe classificação, tributação, retenções, conta gerencial e condições comerciais do serviço.</p>
         <div class="row">
-          <div class="c8"><label>Descrição *</label><input name="descricaoServico" data-required="Serviço"></div>
-          <div class="c4"><label>Grupo</label><input name="grupoServico"></div>
-          <div class="c3"><label>Unidade</label><select name="unidadeServico"><option>SV</option><option>UN</option><option>H</option><option>MÊS</option></select></div>
-          <div class="c3"><label>NCM / NBS</label><input name="ncmNbs"></div>
-          <div class="c3"><label>Cód. municipal</label><input name="codigoServicoMunicipio"></div>
-          <div class="c3"><label>ISS %</label><input name="iss"></div>
-          <div class="c4"><label>Retém impostos</label><select name="retemImpostos"><option>Sim</option><option>Não</option><option>Validar Fiscal</option></select></div>
-          <div class="c4"><label>Centro de Resultado</label><input name="centroResultado"></div>
-          <div class="c4"><label>Natureza</label><input name="natureza"></div>
+          <div class="c8"><label>Descrição completa do serviço *</label><input name="descricaoServico" data-required="Serviço"></div>
+          <div class="c4"><label>Grupo de serviço *</label><input name="grupoServico" data-required="Serviço"></div>
+
+          <div class="c3"><label>Unidade *</label><select name="unidadeServico" data-required="Serviço"><option value="">Selecione...</option><option>SV</option><option>UN</option><option>H</option><option>DIA</option><option>MÊS</option><option>VB</option><option>M²</option><option>M³</option></select></div>
+          <div class="c3"><label>Natureza</label><input name="natureza"></div>
+          <div class="c3"><label>Centro de Resultado</label><input name="centroResultado"></div>
+          <div class="c3"><label>Conta financeira / contábil</label><input name="contaFinanceiraServico"></div>
+
+          <div class="c3"><label>NBS</label><input name="ncmNbs"></div>
+          <div class="c3"><label>Código municipal</label><input name="codigoServicoMunicipio"></div>
+          <div class="c3"><label>Item LC 116</label><input name="itemLc116"></div>
+          <div class="c3"><label>Município da tributação</label><input name="municipioTributacao"></div>
+
+          <div class="c3"><label>ISS (%)</label><input name="iss" type="number" step="0.01"></div>
+          <div class="c3"><label>PIS (%)</label><input name="pisServico" type="number" step="0.01"></div>
+          <div class="c3"><label>COFINS (%)</label><input name="cofinsServico" type="number" step="0.01"></div>
+          <div class="c3"><label>CSLL (%)</label><input name="csllServico" type="number" step="0.01"></div>
+
+          <div class="c3"><label>IR (%)</label><input name="irServico" type="number" step="0.01"></div>
+          <div class="c3"><label>INSS (%)</label><input name="inssServico" type="number" step="0.01"></div>
+          <div class="c3"><label>Retém impostos *</label><select name="retemImpostos" data-required="Serviço"><option value="">Selecione...</option><option>Sim</option><option>Não</option><option>Validar com Fiscal</option></select></div>
+          <div class="c3"><label>Tipo de operação</label><select name="tipoOperacaoServico"><option value="">Selecione...</option><option>Serviço contratado</option><option>Serviço prestado</option><option>Serviço recorrente</option><option>Outro</option></select></div>
+
+          <div class="c3"><label>Valor estimado</label><input name="valorEstimadoServico" type="number" step="0.01"></div>
+          <div class="c3"><label>Periodicidade</label><select name="periodicidadeServico"><option value="">Selecione...</option><option>Único</option><option>Semanal</option><option>Mensal</option><option>Trimestral</option><option>Anual</option><option>Sob demanda</option></select></div>
+          <div class="c3"><label>Prazo / duração</label><input name="duracaoServico"></div>
+          <div class="c3"><label>Prestador sugerido</label><input name="prestadorSugerido"></div>
+
+          <div class="c12"><label>Escopo detalhado do serviço</label><textarea name="escopoServico" placeholder="Descreva entregáveis, local de execução, critérios de aceite, frequência e responsabilidades."></textarea></div>
         </div>
       </fieldset>
 
       <fieldset id="insumo" class="hidden">
-        <legend>2. Insumo — Sienge</legend>
+        <legend>2. Dados do insumo — Sienge</legend>
+        <p class="section-note">Preencha classificação, unidade, aplicação na obra, especificação e fornecedor sugerido.</p>
         <div class="row">
-          <div class="c8"><label>Descrição *</label><input name="descricaoInsumo" data-required="Insumo"></div>
-          <div class="c4"><label>Unidade de medida *</label><select name="unidadeMedida"><option value="">Selecione...</option><option>UN</option><option>KG</option><option>M</option><option>M²</option><option>M³</option><option>L</option><option>CX</option><option>PCT</option><option>TON</option><option>H</option><option>VB</option></select></div>
-          <div class="c6"><label>Grupo de insumo *</label><input name="grupoInsumo"></div>
-          <div class="c6"><label>Conta financeira</label><input name="contaFinanceira" value="Insumo" readonly></div>
+          <div class="c8"><label>Descrição completa *</label><input name="descricaoInsumo" data-required="Insumo"></div>
+          <div class="c4"><label>Descrição reduzida</label><input name="descricaoReduzidaInsumo"></div>
+
+          <div class="c3"><label>Unidade de medida *</label><select name="unidadeMedida" data-required="Insumo"><option value="">Selecione...</option><option>UN</option><option>KG</option><option>G</option><option>M</option><option>M²</option><option>M³</option><option>L</option><option>ML</option><option>CX</option><option>PCT</option><option>TON</option><option>H</option><option>VB</option></select></div>
+          <div class="c3"><label>Grupo de insumo *</label><input name="grupoInsumo" data-required="Insumo"></div>
+          <div class="c3"><label>Subgrupo</label><input name="subgrupoInsumo"></div>
+          <div class="c3"><label>Tipo de insumo</label><select name="tipoInsumo"><option value="">Selecione...</option><option>Material</option><option>Equipamento</option><option>Mão de obra</option><option>Serviço</option><option>Transporte</option><option>Outro</option></select></div>
+
+          <div class="c3"><label>Marca</label><input name="marcaInsumo"></div>
+          <div class="c3"><label>Modelo</label><input name="modeloInsumo"></div>
+          <div class="c3"><label>Referência</label><input name="referenciaInsumo"></div>
+          <div class="c3"><label>NCM</label><input name="ncmInsumo"></div>
+
+          <div class="c4"><label>Conta financeira</label><input name="contaFinanceira" value="Insumo"></div>
+          <div class="c4"><label>Centro de custo / Obra</label><input name="centroCustoObra"></div>
+          <div class="c4"><label>Etapa / Serviço da obra</label><input name="etapaObra"></div>
+
+          <div class="c3"><label>Controla estoque</label><select name="controlaEstoqueInsumo"><option value="">Selecione...</option><option>Sim</option><option>Não</option></select></div>
+          <div class="c3"><label>Estoque mínimo</label><input name="estoqueMinimoInsumo" type="number" step="0.0001"></div>
+          <div class="c3"><label>Valor estimado</label><input name="valorEstimadoInsumo" type="number" step="0.01"></div>
+          <div class="c3"><label>Fornecedor sugerido</label><input name="fornecedorInsumo"></div>
+
+          <div class="c12"><label>Especificação técnica / Aplicação</label><textarea name="especificacaoInsumo" placeholder="Detalhe medidas, material, acabamento, desempenho e onde será aplicado."></textarea></div>
         </div>
       </fieldset>
 
       <fieldset>
-        <legend>3. Complementos</legend>
+        <legend>3. Complementos e documentos</legend>
+        <p class="section-note">Adicione informações que ajudem o responsável a cadastrar corretamente sem precisar devolver a solicitação.</p>
         <div class="row">
-          <div class="c12"><label>Observações</label><textarea name="observacoes"></textarea></div>
-          <div class="c12"><label>Link de anexo</label><input name="linkAnexo" placeholder="Cole aqui o link do documento no Drive, OneDrive ou outro local"></div>
+          <div class="c12"><label>Justificativa e impacto</label><textarea name="justificativa" placeholder="Informe o impacto operacional, financeiro ou de prazo caso o cadastro não seja realizado."></textarea></div>
+          <div class="c12"><label>Observações adicionais</label><textarea name="observacoes"></textarea></div>
+          <div class="c6"><label>Link principal de anexo</label><input name="linkAnexo" placeholder="Drive, OneDrive ou outro endereço acessível"></div>
+          <div class="c6"><label>Segundo link / documentação complementar</label><input name="linkAnexo2"></div>
+          <div class="c12"><label>Documentos disponíveis</label><input name="documentosDisponiveis" placeholder="Ex.: cartão CNPJ, contrato social, ficha técnica, orçamento, foto, XML..."></div>
         </div>
       </fieldset>
 
+      <section class="preview" aria-live="polite">
+        <div class="preview-head">
+          <div>
+            <h3 style="margin-bottom:4px">Resumo antes do envio</h3>
+            <p class="hint" style="margin:0">Todas as informações preenchidas aparecerão aqui, no histórico, na planilha e nos e-mails.</p>
+          </div>
+          <span class="badge" id="previewCount">0 campos preenchidos</span>
+        </div>
+        <div id="previewContent"><p class="hint">Comece a preencher o formulário para visualizar o resumo.</p></div>
+      </section>
 
-      <div id="emailConfigNotice" class="panel" style="margin:0 0 18px;padding:14px;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)">
-        <b>Integração pendente</b>
-        <p class="hint" style="margin-bottom:0">O formulário envia o cadastro em segundo plano, registra o protocolo no histórico local e mantém proteção contra duplicidade.</p>
+      <div id="emailConfigNotice" class="panel" style="margin:0 0 18px;padding:14px;border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.07)">
+        <b>Integração ativa</b>
+        <p class="hint" style="margin-bottom:0">O cadastro será registrado com protocolo, histórico detalhado e proteção contra duplicidade.</p>
       </div>
 
       <div class="actions">
         <button type="button" class="btn danger" id="limpar">Limpar rascunho</button>
         <div>
           <button type="button" class="btn" id="salvar">Salvar rascunho</button>
-          <button type="submit" class="btn primary">Enviar solicitação</button>
+          <button type="submit" class="btn primary">Enviar solicitação completa</button>
         </div>
       </div>
     </form>
@@ -232,39 +426,129 @@ textarea{min-height:100px}
   <div class="panel" style="margin-top:18px">
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div>
-        <h3>Histórico local — 7 dias</h3>
-        <p class="subtitle">Registros enviados por este navegador nos últimos 7 dias.</p>
+        <h3>Histórico detalhado — 7 dias</h3>
+        <p class="subtitle">Registros enviados por este navegador. Clique em “Ver detalhes” para consultar todos os campos.</p>
       </div>
       <div>
-        <button class="btn" id="excel">Excel</button>
-        <button class="btn" id="pdf">PDF</button>
+        <button class="btn" id="excel">Excel completo</button>
+        <button class="btn" id="pdf">PDF detalhado</button>
       </div>
     </div>
     <div class="tablewrap">
       <table class="table">
-        <thead><tr><th>Data</th><th>Protocolo</th><th>Sistema</th><th>Empresa</th><th>Tipo</th><th>Cadastro</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Data</th><th>Protocolo</th><th>Sistema</th><th>Empresa</th>
+            <th>Tipo</th><th>Cadastro</th><th>Solicitante</th><th>Prioridade</th><th>Ações</th>
+          </tr>
+        </thead>
         <tbody id="historicoBody"></tbody>
       </table>
     </div>
   </div>
 </main>
 
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitle">Detalhes do cadastro</h2>
+        <p class="hint" id="modalSubtitle"></p>
+      </div>
+      <button class="close" id="closeModal" type="button" aria-label="Fechar">×</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><b id="toastTitulo"></b><span id="toastMensagem"></span></div>
 
 <script>
-/* ==========================================================
-   BACKEND GOOGLE APPS SCRIPT
-
-   1. Implante o arquivo Code.gs como "Aplicativo da Web".
-   2. Execute como: você.
-   3. Acesso: qualquer pessoa com o link.
-   4. Cole abaixo a URL terminada em /exec.
-   ========================================================== */
 const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNZ5BQzuX_oDwL1YUEabQ_46edjJm-k6bu-v_IEzC2KTtgCNtNjowoCi9khn7O8vkfRg/exec";
 
-const DRAFT_KEY = "central_cadastros_draft_v2";
+const DRAFT_KEY = "central_cadastros_draft_v3";
 const HISTORY_KEY = "central_cadastros_history_v2";
-const PENDING_KEY = "central_cadastros_pending_v2";
+const PENDING_KEY = "central_cadastros_pending_v3";
+
+const CAMPOS_COMUNS = [
+  ["sistema","Sistema"],["empresa","Empresa"],["unidadeFilial","Unidade / Filial"],
+  ["prioridade","Prioridade"],["solicitante","Solicitante"],["emailSolicitante","E-mail do solicitante"],
+  ["telefoneSolicitante","Telefone / Ramal"],["departamento","Departamento"],
+  ["cargoSolicitante","Cargo / Função"],["dataNecessidade","Data necessária"],
+  ["motivoSolicitacao","Motivo da solicitação"]
+];
+
+const CAMPOS_TIPO = {
+  Parceiro: [
+    ["categoriaParceiro","Categoria do parceiro"],["tipoPessoa","Tipo de pessoa"],
+    ["razaoSocial","Razão social / Nome completo"],["nomeFantasia","Nome fantasia"],
+    ["cnpjCpf","CNPJ / CPF"],["inscricaoEstadual","IE / RG"],
+    ["inscricaoMunicipal","Inscrição municipal"],["regimeTributario","Regime tributário"],
+    ["contribuinteIcms","Contribuinte ICMS"],["optanteSimples","Optante Simples Nacional"],
+    ["contatoPrincipal","Contato principal"],["telefone","Telefone"],["celular","Celular / WhatsApp"],
+    ["emailComercial","E-mail comercial"],["emailFiscal","E-mail fiscal"],["emailFinanceiro","E-mail financeiro"],
+    ["cep","CEP"],["endereco","Endereço"],["numero","Número"],["complemento","Complemento"],
+    ["bairro","Bairro"],["cidade","Cidade"],["uf","UF"],["pais","País"],
+    ["condicaoPagamentoParceiro","Condição de pagamento"],["limiteCredito","Limite de crédito"],
+    ["banco","Banco"],["agencia","Agência"],["contaBancaria","Conta / Tipo"],
+    ["chavePix","Chave PIX"],["favorecidoConta","Favorecido da conta"],
+    ["grupoParceiro","Categoria / Grupo sugerido"]
+  ],
+  Produto: [
+    ["descricaoProduto","Descrição completa"],["descricaoReduzidaProduto","Descrição reduzida"],
+    ["grupoProduto","Grupo de produto"],["subgrupoProduto","Subgrupo"],
+    ["tipoUtilizacaoProduto","Tipo de utilização"],["unidadePadrao","Unidade padrão"],
+    ["unidadeCompra","Unidade de compra"],["fatorConversao","Fator de conversão"],
+    ["codigoBarras","Código de barras / EAN"],["marca","Marca"],["modeloProduto","Modelo"],
+    ["fabricanteProduto","Fabricante"],["referenciaFornecedor","Referência do fabricante"],
+    ["ncm","NCM"],["cest","CEST"],["origemMercadoria","Origem da mercadoria"],
+    ["classificacaoFiscalProduto","Classificação fiscal adicional"],
+    ["controlaEstoque","Controla estoque"],["controlaLote","Controla lote"],
+    ["controlaValidade","Controla validade"],["controlaSerie","Controla número de série"],
+    ["estoqueMinimo","Estoque mínimo"],["estoqueMaximo","Estoque máximo"],
+    ["localEstoquePadrao","Local padrão"],["diasValidade","Dias de validade"],
+    ["pesoLiquido","Peso líquido (kg)"],["pesoBruto","Peso bruto (kg)"],
+    ["dimensoesProduto","Dimensões"],["valorEstimadoProduto","Valor estimado"],
+    ["fornecedorProduto","Fornecedor sugerido"],["aplicacaoProduto","Aplicação"],
+    ["especificacaoTecnicaProduto","Especificação técnica"]
+  ],
+  Serviço: [
+    ["descricaoServico","Descrição completa do serviço"],["grupoServico","Grupo de serviço"],
+    ["unidadeServico","Unidade"],["natureza","Natureza"],["centroResultado","Centro de Resultado"],
+    ["contaFinanceiraServico","Conta financeira / contábil"],["ncmNbs","NBS"],
+    ["codigoServicoMunicipio","Código municipal"],["itemLc116","Item LC 116"],
+    ["municipioTributacao","Município da tributação"],["iss","ISS (%)"],
+    ["pisServico","PIS (%)"],["cofinsServico","COFINS (%)"],["csllServico","CSLL (%)"],
+    ["irServico","IR (%)"],["inssServico","INSS (%)"],["retemImpostos","Retém impostos"],
+    ["tipoOperacaoServico","Tipo de operação"],["valorEstimadoServico","Valor estimado"],
+    ["periodicidadeServico","Periodicidade"],["duracaoServico","Prazo / duração"],
+    ["prestadorSugerido","Prestador sugerido"],["escopoServico","Escopo detalhado"]
+  ],
+  Insumo: [
+    ["descricaoInsumo","Descrição completa"],["descricaoReduzidaInsumo","Descrição reduzida"],
+    ["unidadeMedida","Unidade de medida"],["grupoInsumo","Grupo de insumo"],
+    ["subgrupoInsumo","Subgrupo"],["tipoInsumo","Tipo de insumo"],
+    ["marcaInsumo","Marca"],["modeloInsumo","Modelo"],["referenciaInsumo","Referência"],
+    ["ncmInsumo","NCM"],["contaFinanceira","Conta financeira"],
+    ["centroCustoObra","Centro de custo / Obra"],["etapaObra","Etapa / Serviço da obra"],
+    ["controlaEstoqueInsumo","Controla estoque"],["estoqueMinimoInsumo","Estoque mínimo"],
+    ["valorEstimadoInsumo","Valor estimado"],["fornecedorInsumo","Fornecedor sugerido"],
+    ["especificacaoInsumo","Especificação técnica / Aplicação"]
+  ]
+};
+
+const CAMPOS_COMPLEMENTOS = [
+  ["justificativa","Justificativa e impacto"],["observacoes","Observações adicionais"],
+  ["linkAnexo","Link principal de anexo"],["linkAnexo2","Segundo link"],
+  ["documentosDisponiveis","Documentos disponíveis"]
+];
+
+const REQUIRED_BY_TYPE = {
+  Parceiro:["categoriaParceiro","tipoPessoa","razaoSocial","cnpjCpf"],
+  Produto:["descricaoProduto","grupoProduto","unidadePadrao","ncm","controlaEstoque"],
+  Serviço:["descricaoServico","grupoServico","unidadeServico","retemImpostos"],
+  Insumo:["descricaoInsumo","unidadeMedida","grupoInsumo"]
+};
 
 const form = document.getElementById("cadastroForm");
 const toastBox = document.getElementById("toast");
@@ -285,451 +569,434 @@ const cepEl = document.getElementById("cep");
 const historicoBodyEl = document.getElementById("historicoBody");
 const netStatusEl = document.getElementById("netStatus");
 const submitBtn = form.querySelector('button[type="submit"]');
+const previewContentEl = document.getElementById("previewContent");
+const previewCountEl = document.getElementById("previewCount");
+const modalEl = document.getElementById("detailModal");
+const modalTitleEl = document.getElementById("modalTitle");
+const modalSubtitleEl = document.getElementById("modalSubtitle");
+const modalContentEl = document.getElementById("modalContent");
+const closeModalEl = document.getElementById("closeModal");
 
-const BACKEND_CONFIGURADO =
-  /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/.test(
-    GOOGLE_APPS_SCRIPT_URL.trim()
-  );
+const BACKEND_CONFIGURADO = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/.test(GOOGLE_APPS_SCRIPT_URL.trim());
 
 let envioEmAndamento = false;
 let toastTimer = null;
 
-function mostrarToast(titulo, mensagem) {
-  toastTituloEl.textContent = titulo;
-  toastMensagemEl.textContent = mensagem;
+function mostrarToast(titulo,mensagem){
+  toastTituloEl.textContent=titulo;
+  toastMensagemEl.textContent=mensagem;
   toastBox.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastBox.classList.remove("show"), 5000);
+  toastTimer=setTimeout(()=>toastBox.classList.remove("show"),5500);
 }
 
-function dadosForm() {
+function escaparHtml(valor){
+  return String(valor??"")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+function valorPreenchido(valor){
+  return valor!==undefined && valor!==null && String(valor).trim()!=="";
+}
+
+function formatarValor(campo,valor){
+  if(!valorPreenchido(valor)) return "";
+  if(campo==="dataNecessidade"){
+    const partes=String(valor).split("-");
+    return partes.length===3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : valor;
+  }
+  if(["limiteCredito","valorEstimadoProduto","valorEstimadoServico","valorEstimadoInsumo"].includes(campo)){
+    const numero=Number(valor);
+    return Number.isFinite(numero) ? numero.toLocaleString("pt-BR",{style:"currency",currency:"BRL"}) : valor;
+  }
+  return String(valor);
+}
+
+function dadosFormBrutos(){
   return Object.fromEntries(new FormData(form).entries());
 }
 
-function setType(tipo) {
-  tipoCadastroEl.value = tipo;
-  document.querySelectorAll(".type").forEach(x =>
-    x.classList.toggle("active", x.dataset.type === tipo)
-  );
-  parceiroEl.classList.toggle("hidden", tipo !== "Parceiro");
-  produtoEl.classList.toggle("hidden", tipo !== "Produto");
-  servicoEl.classList.toggle("hidden", tipo !== "Serviço");
+function filtrarDadosAtivos(dados){
+  const tipo=dados.tipoCadastro;
+  const camposPermitidos=new Set([
+    ...CAMPOS_COMUNS.map(x=>x[0]),
+    ...(CAMPOS_TIPO[tipo]||[]).map(x=>x[0]),
+    ...CAMPOS_COMPLEMENTOS.map(x=>x[0]),
+    "tipoCadastro"
+  ]);
+  return Object.fromEntries(Object.entries(dados).filter(([chave])=>camposPermitidos.has(chave)));
 }
 
-document.querySelectorAll(".type").forEach(x => {
-  x.onclick = () => setType(x.dataset.type);
-});
+function dadosForm(){
+  return filtrarDadosAtivos(dadosFormBrutos());
+}
 
-sistemaEl.addEventListener("change", () => {
-  const sistema = sistemaEl.value;
-  sankhyaAreaEl.classList.toggle("hidden", sistema !== "Sankhya");
-  insumoEl.classList.toggle("hidden", sistema !== "Sienge");
+function obterSecoes(dados){
+  return [
+    {titulo:"Identificação da solicitação",campos:CAMPOS_COMUNS},
+    {titulo:`Dados de ${dados.tipoCadastro||"cadastro"}`,campos:CAMPOS_TIPO[dados.tipoCadastro]||[]},
+    {titulo:"Complementos e documentos",campos:CAMPOS_COMPLEMENTOS}
+  ].map(secao=>({
+    ...secao,
+    itens:secao.campos
+      .map(([campo,label])=>({campo,label,valor:formatarValor(campo,dados[campo])}))
+      .filter(item=>valorPreenchido(item.valor))
+  })).filter(secao=>secao.itens.length);
+}
 
-  if (sistema === "Sankhya") {
-    setType("Parceiro");
-  } else if (sistema === "Sienge") {
-    parceiroEl.classList.add("hidden");
-    produtoEl.classList.add("hidden");
-    servicoEl.classList.add("hidden");
-    tipoCadastroEl.value = "Insumo";
-  } else {
+function renderizarSecoes(dados){
+  const secoes=obterSecoes(dados);
+  if(!secoes.length) return '<p class="hint">Nenhuma informação preenchida.</p>';
+  return secoes.map(secao=>`
+    <div class="detail-section">
+      <h4>${escaparHtml(secao.titulo)}</h4>
+      <div class="detail-grid">
+        ${secao.itens.map(item=>`
+          <div class="detail-item">
+            <b>${escaparHtml(item.label)}</b>
+            <span>${escaparHtml(item.valor)}</span>
+          </div>`).join("")}
+      </div>
+    </div>`).join("");
+}
+
+function atualizarPreview(){
+  const dados=dadosForm();
+  const secoes=obterSecoes(dados);
+  const total=secoes.reduce((s,secao)=>s+secao.itens.length,0);
+  previewCountEl.textContent=`${total} ${total===1?"campo preenchido":"campos preenchidos"}`;
+  previewContentEl.innerHTML=total?renderizarSecoes(dados):'<p class="hint">Comece a preencher o formulário para visualizar o resumo.</p>';
+}
+
+function setType(tipo){
+  tipoCadastroEl.value=tipo;
+  document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x.dataset.type===tipo));
+  parceiroEl.classList.toggle("hidden",tipo!=="Parceiro");
+  produtoEl.classList.toggle("hidden",tipo!=="Produto");
+  servicoEl.classList.toggle("hidden",tipo!=="Serviço");
+  insumoEl.classList.toggle("hidden",tipo!=="Insumo");
+  atualizarPreview();
+}
+
+document.querySelectorAll(".type").forEach(x=>x.onclick=()=>setType(x.dataset.type));
+
+sistemaEl.addEventListener("change",()=>{
+  const sistema=sistemaEl.value;
+  sankhyaAreaEl.classList.toggle("hidden",sistema!=="Sankhya");
+
+  if(sistema==="Sankhya"){
+    setType(tipoCadastroEl.value==="Insumo"?"Parceiro":tipoCadastroEl.value||"Parceiro");
+  }else if(sistema==="Sienge"){
+    setType("Insumo");
+  }else{
     parceiroEl.classList.add("hidden");
     produtoEl.classList.add("hidden");
     servicoEl.classList.add("hidden");
     insumoEl.classList.add("hidden");
   }
-
   salvarRascunho();
+  atualizarPreview();
 });
 
-function salvarRascunho() {
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(dadosForm()));
+function salvarRascunho(){
+  localStorage.setItem(DRAFT_KEY,JSON.stringify(dadosFormBrutos()));
 }
 
-form.addEventListener("input", () => {
+form.addEventListener("input",()=>{
   clearTimeout(window.rascunhoTimer);
-  window.rascunhoTimer = setTimeout(salvarRascunho, 350);
+  window.rascunhoTimer=setTimeout(salvarRascunho,350);
+  atualizarPreview();
 });
+form.addEventListener("change",atualizarPreview);
 
-salvarBtn.addEventListener("click", () => {
+salvarBtn.addEventListener("click",()=>{
   salvarRascunho();
-  mostrarToast("Rascunho salvo", "Os dados foram salvos neste navegador.");
+  mostrarToast("Rascunho salvo","Todos os campos foram salvos neste navegador.");
 });
 
-limparBtn.addEventListener("click", () => {
-  if (!confirm("Deseja limpar o rascunho?")) return;
+function resetarFormulario(){
+  form.reset();
+  sistemaEl.value="Sankhya";
+  tipoCadastroEl.value="Parceiro";
+  setType("Parceiro");
+  sistemaEl.dispatchEvent(new Event("change"));
+  atualizarPreview();
+}
 
+limparBtn.addEventListener("click",()=>{
+  if(!confirm("Deseja limpar todo o rascunho?"))return;
   localStorage.removeItem(DRAFT_KEY);
   sessionStorage.removeItem(PENDING_KEY);
-  form.reset();
-  sistemaEl.value = "Sankhya";
-  sistemaEl.dispatchEvent(new Event("change"));
-  setType("Parceiro");
+  resetarFormulario();
 });
 
-function restaurarRascunho() {
-  try {
-    const dados = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-    if (!dados) return;
-
-    Object.entries(dados).forEach(([campo, valor]) => {
-      if (form.elements[campo]) form.elements[campo].value = valor;
+function restaurarRascunho(){
+  try{
+    const dados=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");
+    if(!dados)return;
+    Object.entries(dados).forEach(([campo,valor])=>{
+      const elemento=form.elements[campo];
+      if(elemento) elemento.value=valor;
     });
-
+    sistemaEl.value=dados.sistema||"Sankhya";
+    tipoCadastroEl.value=dados.tipoCadastro||"Parceiro";
     sistemaEl.dispatchEvent(new Event("change"));
-
-    if (dados.sistema === "Sankhya") {
-      setType(dados.tipoCadastro || "Parceiro");
-    }
-  } catch (erro) {
-    console.warn("Não foi possível restaurar o rascunho.", erro);
+    if(dados.sistema==="Sankhya")setType(dados.tipoCadastro||"Parceiro");
+    atualizarPreview();
+  }catch(erro){
+    console.warn("Não foi possível restaurar o rascunho.",erro);
   }
 }
 
-function destinoResponsavel(dados) {
-  if (dados.sistema === "Sienge") {
-    return { nome: "Amanda Felisberto", grupo: "AMANDA" };
-  }
-
-  if (dados.sistema === "Sankhya" && dados.empresa === "Área Incrível") {
-    return { nome: "Amanda Felisberto", grupo: "AMANDA" };
-  }
-
-  if (
-    dados.sistema === "Sankhya" &&
-    (dados.empresa === "A10" || dados.empresa === "M2LOG")
-  ) {
-    return { nome: "Lisandra Ferreira", grupo: "LISANDRA" };
-  }
-
+function destinoResponsavel(dados){
+  if(dados.sistema==="Sienge")return{nome:"Amanda Felisberto",grupo:"AMANDA"};
+  if(dados.sistema==="Sankhya"&&dados.empresa==="Área Incrível")return{nome:"Amanda Felisberto",grupo:"AMANDA"};
+  if(dados.sistema==="Sankhya"&&(dados.empresa==="A10"||dados.empresa==="M2LOG"))return{nome:"Lisandra Ferreira",grupo:"LISANDRA"};
   throw new Error("Não existe responsável configurado para essa combinação.");
 }
 
-function descricaoCadastro(dados) {
-  if (dados.tipoCadastro === "Parceiro") {
-    return dados.razaoSocial || dados.nomeFantasia || dados.cnpjCpf || "";
-  }
-
-  if (dados.tipoCadastro === "Produto") {
-    return dados.descricaoProduto || dados.grupoProduto || "";
-  }
-
-  if (dados.tipoCadastro === "Serviço") {
-    return dados.descricaoServico || dados.grupoServico || "";
-  }
-
-  return dados.descricaoInsumo || dados.grupoInsumo || "";
+function descricaoCadastro(dados){
+  if(dados.tipoCadastro==="Parceiro")return dados.razaoSocial||dados.nomeFantasia||dados.cnpjCpf||"";
+  if(dados.tipoCadastro==="Produto")return dados.descricaoProduto||dados.grupoProduto||"";
+  if(dados.tipoCadastro==="Serviço")return dados.descricaoServico||dados.grupoServico||"";
+  return dados.descricaoInsumo||dados.grupoInsumo||"";
 }
 
-function gerarProtocolo() {
-  const agora = new Date();
-  const data = agora.toISOString().slice(0, 10).replaceAll("-", "");
-  const sequencia = String(agora.getTime()).slice(-7);
-  return `CAD-${data}-${sequencia}`;
+function gerarProtocolo(){
+  const agora=new Date();
+  const data=agora.toISOString().slice(0,10).replaceAll("-","");
+  return`CAD-${data}-${String(agora.getTime()).slice(-7)}`;
 }
 
-function gerarRequestId() {
-  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
-  return `REQ-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+function gerarRequestId(){
+  if(window.crypto?.randomUUID)return window.crypto.randomUUID();
+  return`REQ-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function gerarFingerprint(dados) {
+function gerarFingerprint(dados){
   return JSON.stringify({
-    sistema: dados.sistema,
-    empresa: dados.empresa,
-    tipoCadastro: dados.tipoCadastro,
-    cadastro: descricaoCadastro(dados).trim().toLowerCase(),
-    solicitante: (dados.solicitante || "").trim().toLowerCase(),
-    email: (dados.emailSolicitante || "").trim().toLowerCase()
+    sistema:dados.sistema,empresa:dados.empresa,tipoCadastro:dados.tipoCadastro,
+    cadastro:descricaoCadastro(dados).trim().toLowerCase(),
+    solicitante:(dados.solicitante||"").trim().toLowerCase(),
+    email:(dados.emailSolicitante||"").trim().toLowerCase()
   });
 }
 
-function obterEnvioPendente(dados) {
-  const fingerprint = gerarFingerprint(dados);
-
-  try {
-    const existente = JSON.parse(sessionStorage.getItem(PENDING_KEY) || "null");
-    const aindaValido =
-      existente &&
-      existente.fingerprint === fingerprint &&
-      Date.now() - existente.criadoEm < 30 * 60 * 1000;
-
-    if (aindaValido) return existente;
-  } catch (erro) {
-    console.warn("Não foi possível recuperar o identificador do envio.", erro);
-  }
-
-  const novo = {
-    requestId: gerarRequestId(),
-    protocolo: gerarProtocolo(),
-    fingerprint,
-    criadoEm: Date.now()
-  };
-
-  sessionStorage.setItem(PENDING_KEY, JSON.stringify(novo));
+function obterEnvioPendente(dados){
+  const fingerprint=gerarFingerprint(dados);
+  try{
+    const existente=JSON.parse(sessionStorage.getItem(PENDING_KEY)||"null");
+    if(existente&&existente.fingerprint===fingerprint&&Date.now()-existente.criadoEm<30*60*1000)return existente;
+  }catch(erro){}
+  const novo={requestId:gerarRequestId(),protocolo:gerarProtocolo(),fingerprint,criadoEm:Date.now()};
+  sessionStorage.setItem(PENDING_KEY,JSON.stringify(novo));
   return novo;
 }
 
-async function enviarParaServidor(payload) {
-  const corpo = new URLSearchParams();
-  corpo.set("payload", JSON.stringify(payload));
-
-  try {
-    await fetch(GOOGLE_APPS_SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: corpo,
-      redirect: "follow",
-      cache: "no-store",
-      keepalive: true
+async function enviarParaServidor(payload){
+  const corpo=new URLSearchParams();
+  corpo.set("payload",JSON.stringify(payload));
+  try{
+    await fetch(GOOGLE_APPS_SCRIPT_URL,{
+      method:"POST",mode:"no-cors",body:corpo,redirect:"follow",cache:"no-store",keepalive:true
     });
-  } catch (erro) {
-    throw new Error(
-      "Não foi possível acessar o Google Apps Script. Verifique sua conexão."
-    );
+  }catch(erro){
+    throw new Error("Não foi possível acessar o Google Apps Script. Verifique sua conexão.");
   }
-
-  /*
-   * Em mode:"no-cors", o navegador não pode ler a resposta do Apps Script.
-   * Isso não significa falha: o cadastro já foi encaminhado ao servidor.
-   * O request_id continua impedindo duplicidade no backend.
-   */
-  return {
-    ok: true,
-    protocolo: payload.protocolo,
-    duplicado: false
-  };
+  return{ok:true,protocolo:payload.protocolo,duplicado:false};
 }
 
-function obterHistorico() {
-  let registros = [];
-
-  try {
-    registros = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-  } catch (erro) {
-    console.warn("Histórico local inválido.", erro);
-  }
-
-  const limite = Date.now() - 7 * 86400000;
-  registros = registros.filter(
-    item => new Date(item.dataEnvio).getTime() >= limite
-  );
-
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(registros));
+function obterHistorico(){
+  let registros=[];
+  try{registros=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch(erro){}
+  const limite=Date.now()-7*86400000;
+  registros=registros.filter(item=>new Date(item.dataEnvio).getTime()>=limite);
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(registros));
   return registros;
 }
 
-function registrarHistorico(dados, protocolo) {
-  const registros = obterHistorico();
-
-  if (registros.some(item => item.protocolo === protocolo)) {
-    renderizarHistorico();
-    return;
-  }
-
-  registros.unshift({
-    dataEnvio: new Date().toISOString(),
-    protocolo,
-    dados
-  });
-
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(registros));
+function registrarHistorico(dados,protocolo){
+  const registros=obterHistorico();
+  if(registros.some(item=>item.protocolo===protocolo)){renderizarHistorico();return}
+  registros.unshift({dataEnvio:new Date().toISOString(),protocolo,dados});
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(registros));
   renderizarHistorico();
 }
 
-function escaparHtml(valor) {
-  return String(valor ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function renderizarHistorico(){
+  const registros=obterHistorico();
+  if(!registros.length){
+    historicoBodyEl.innerHTML='<tr><td colspan="9" class="empty">Nenhum cadastro enviado por este navegador nos últimos 7 dias.</td></tr>';
+    return;
+  }
+  historicoBodyEl.innerHTML=registros.map((item,indice)=>`<tr>
+    <td>${escaparHtml(new Date(item.dataEnvio).toLocaleString("pt-BR"))}</td>
+    <td>${escaparHtml(item.protocolo)}</td>
+    <td>${escaparHtml(item.dados.sistema)}</td>
+    <td>${escaparHtml(item.dados.empresa)}</td>
+    <td>${escaparHtml(item.dados.tipoCadastro)}</td>
+    <td>${escaparHtml(descricaoCadastro(item.dados))}</td>
+    <td>${escaparHtml(item.dados.solicitante||"")}</td>
+    <td>${escaparHtml(item.dados.prioridade||"")}</td>
+    <td><button class="btn small" type="button" data-detail-index="${indice}">Ver detalhes</button></td>
+  </tr>`).join("");
 }
 
-function renderizarHistorico() {
-  historicoBodyEl.innerHTML = obterHistorico()
-    .map(item => `<tr>
-      <td>${escaparHtml(new Date(item.dataEnvio).toLocaleString("pt-BR"))}</td>
-      <td>${escaparHtml(item.protocolo)}</td>
-      <td>${escaparHtml(item.dados.sistema)}</td>
-      <td>${escaparHtml(item.dados.empresa)}</td>
-      <td>${escaparHtml(item.dados.tipoCadastro)}</td>
-      <td>${escaparHtml(descricaoCadastro(item.dados))}</td>
-    </tr>`)
-    .join("");
+historicoBodyEl.addEventListener("click",evento=>{
+  const botao=evento.target.closest("[data-detail-index]");
+  if(!botao)return;
+  const registro=obterHistorico()[Number(botao.dataset.detailIndex)];
+  if(!registro)return;
+  modalTitleEl.textContent=descricaoCadastro(registro.dados)||"Detalhes do cadastro";
+  modalSubtitleEl.textContent=`${registro.protocolo} • ${new Date(registro.dataEnvio).toLocaleString("pt-BR")}`;
+  modalContentEl.innerHTML=renderizarSecoes(registro.dados);
+  modalEl.classList.add("show");
+});
+
+function fecharModal(){modalEl.classList.remove("show")}
+closeModalEl.addEventListener("click",fecharModal);
+modalEl.addEventListener("click",evento=>{if(evento.target===modalEl)fecharModal()});
+document.addEventListener("keydown",evento=>{if(evento.key==="Escape")fecharModal()});
+
+function validarCamposTipo(dados){
+  const obrigatorios=REQUIRED_BY_TYPE[dados.tipoCadastro]||[];
+  for(const campo of obrigatorios){
+    const elemento=form.elements[campo];
+    if(!elemento||!String(elemento.value||"").trim()){
+      elemento?.focus();
+      mostrarToast("Campo obrigatório",`Preencha: ${obterLabelCampo(campo,dados.tipoCadastro)}.`);
+      return false;
+    }
+  }
+  return true;
 }
 
-form.addEventListener("submit", async evento => {
+function obterLabelCampo(campo,tipo){
+  const todos=[...CAMPOS_COMUNS,...(CAMPOS_TIPO[tipo]||[]),...CAMPOS_COMPLEMENTOS];
+  return todos.find(item=>item[0]===campo)?.[1]||campo;
+}
+
+form.addEventListener("submit",async evento=>{
   evento.preventDefault();
-
-  if (envioEmAndamento) {
-    mostrarToast(
-      "Envio em andamento",
-      "A solicitação já está sendo processada. Não é necessário clicar novamente."
-    );
+  if(envioEmAndamento){
+    mostrarToast("Envio em andamento","A solicitação já está sendo processada.");
+    return;
+  }
+  if(!form.reportValidity())return;
+  const dados=dadosForm();
+  if(!validarCamposTipo(dados))return;
+  if(!BACKEND_CONFIGURADO){
+    mostrarToast("Integração não configurada","Configure a URL do aplicativo da Web.");
     return;
   }
 
-  const dados = dadosForm();
-  const campoPrincipal = form.querySelector(
-    `[data-required="${dados.tipoCadastro}"]`
-  );
+  const botao=evento.submitter||submitBtn;
+  envioEmAndamento=true;
+  botao.disabled=true;
+  botao.textContent="Enviando cadastro completo...";
 
-  if (campoPrincipal && !campoPrincipal.value.trim()) {
-    campoPrincipal.focus();
-    mostrarToast(
-      "Campo obrigatório",
-      "Preencha o campo principal do cadastro."
-    );
-    return;
-  }
-
-  if (!BACKEND_CONFIGURADO) {
-    mostrarToast(
-      "Integração não configurada",
-      "Cole a URL do aplicativo da Web do Google Apps Script no código."
-    );
-    return;
-  }
-
-  const botao = evento.submitter || submitBtn;
-  envioEmAndamento = true;
-  botao.disabled = true;
-  botao.textContent = "Enviando...";
-
-  try {
-    const responsavel = destinoResponsavel(dados);
-    const envioPendente = obterEnvioPendente(dados);
-
-    const payload = {
-      ...dados,
-      request_id: envioPendente.requestId,
-      protocolo: envioPendente.protocolo,
-      data_cliente: new Date().toISOString(),
-      cadastro_solicitado: descricaoCadastro(dados),
-      responsavel_nome: responsavel.nome,
-      responsavel_grupo: responsavel.grupo
+  try{
+    const responsavel=destinoResponsavel(dados);
+    const pendente=obterEnvioPendente(dados);
+    const payload={
+      ...dados,request_id:pendente.requestId,protocolo:pendente.protocolo,
+      data_cliente:new Date().toISOString(),cadastro_solicitado:descricaoCadastro(dados),
+      responsavel_nome:responsavel.nome,responsavel_grupo:responsavel.grupo
     };
+    const retorno=await enviarParaServidor(payload);
+    const protocolo=retorno.protocolo||pendente.protocolo;
 
-    const retorno = await enviarParaServidor(payload);
-    const protocolo = retorno.protocolo || envioPendente.protocolo;
-
-    registrarHistorico(dados, protocolo);
+    registrarHistorico(dados,protocolo);
     localStorage.removeItem(DRAFT_KEY);
     sessionStorage.removeItem(PENDING_KEY);
+    resetarFormulario();
 
-    form.reset();
-    sistemaEl.value = "Sankhya";
-    sistemaEl.dispatchEvent(new Event("change"));
-    setType("Parceiro");
-
-    mostrarToast(
-      "Solicitação enviada",
-      `Cadastro registrado no histórico. Protocolo: ${protocolo}`
-    );
-  } catch (erro) {
+    mostrarToast("Solicitação enviada",`Cadastro completo registrado no histórico. Protocolo: ${protocolo}`);
+  }catch(erro){
     salvarRascunho();
-    mostrarToast(
-      "Falha no envio",
-      erro?.message || "Não foi possível registrar a solicitação."
-    );
-  } finally {
-    envioEmAndamento = false;
-    botao.disabled = false;
-    botao.textContent = "Enviar solicitação";
+    mostrarToast("Falha no envio",erro?.message||"Não foi possível registrar a solicitação.");
+  }finally{
+    envioEmAndamento=false;
+    botao.disabled=false;
+    botao.textContent="Enviar solicitação completa";
   }
 });
 
-excelBtn.addEventListener("click", () => {
-  const linhas = obterHistorico().map(item => ({
-    Data: new Date(item.dataEnvio).toLocaleString("pt-BR"),
-    Protocolo: item.protocolo,
-    Sistema: item.dados.sistema,
-    Empresa: item.dados.empresa,
-    Tipo: item.dados.tipoCadastro,
-    Cadastro: descricaoCadastro(item.dados),
-    Solicitante: item.dados.solicitante,
-    Prioridade: item.dados.prioridade
-  }));
-
-  if (!linhas.length) {
-    mostrarToast("Sem dados", "Nada para exportar.");
-    return;
-  }
-
-  const planilha = XLSX.utils.json_to_sheet(linhas);
-  const arquivo = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(arquivo, planilha, "Cadastros");
-  XLSX.writeFile(arquivo, "cadastros_7_dias.xlsx");
-});
-
-pdfBtn.addEventListener("click", () => {
-  const registros = obterHistorico();
-
-  if (!registros.length) {
-    mostrarToast("Sem dados", "Nada para exportar.");
-    return;
-  }
-
-  const { jsPDF } = window.jspdf;
-  const documento = new jsPDF({ orientation: "landscape" });
-
-  documento.text("Cadastros dos últimos 7 dias", 14, 16);
-  documento.autoTable({
-    startY: 22,
-    head: [["Data", "Protocolo", "Sistema", "Empresa", "Tipo", "Cadastro"]],
-    body: registros.map(item => [
-      new Date(item.dataEnvio).toLocaleString("pt-BR"),
-      item.protocolo,
-      item.dados.sistema,
-      item.dados.empresa,
-      item.dados.tipoCadastro,
-      descricaoCadastro(item.dados)
-    ])
+function linhaExcelCompleta(item){
+  const linha={
+    Data:new Date(item.dataEnvio).toLocaleString("pt-BR"),
+    Protocolo:item.protocolo,
+    Tipo:item.dados.tipoCadastro,
+    Cadastro:descricaoCadastro(item.dados)
+  };
+  obterSecoes(item.dados).forEach(secao=>{
+    secao.itens.forEach(campo=>linha[`${secao.titulo} - ${campo.label}`]=campo.valor);
   });
-
-  documento.save("cadastros_7_dias.pdf");
-});
-
-cepEl.addEventListener("blur", async () => {
-  const cep = cepEl.value.replace(/\D/g, "");
-  if (cep.length !== 8) return;
-
-  try {
-    const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const endereco = await resposta.json();
-
-    if (!endereco.erro) {
-      form.elements.endereco.value = endereco.logradouro || "";
-      form.elements.bairro.value = endereco.bairro || "";
-      form.elements.cidade.value = endereco.localidade || "";
-      form.elements.uf.value = endereco.uf || "";
-    }
-  } catch (erro) {
-    console.warn("Não foi possível consultar o CEP.", erro);
-  }
-});
-
-window.addEventListener("online", () => {
-  netStatusEl.textContent = "● Conectado";
-});
-
-window.addEventListener("offline", () => {
-  netStatusEl.textContent = "● Offline";
-});
-
-const avisoConfig = document.getElementById("emailConfigNotice");
-if (BACKEND_CONFIGURADO && avisoConfig) avisoConfig.classList.add("hidden");
-
-restaurarRascunho();
-
-if (!localStorage.getItem(DRAFT_KEY)) {
-  sistemaEl.value = "Sankhya";
-  sistemaEl.dispatchEvent(new Event("change"));
-  setType("Parceiro");
+  return linha;
 }
 
+excelBtn.addEventListener("click",()=>{
+  const registros=obterHistorico();
+  if(!registros.length)return mostrarToast("Sem dados","Nada para exportar.");
+  const ws=XLSX.utils.json_to_sheet(registros.map(linhaExcelCompleta));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Cadastros completos");
+  XLSX.writeFile(wb,"cadastros_completos_7_dias.xlsx");
+});
+
+pdfBtn.addEventListener("click",()=>{
+  const registros=obterHistorico();
+  if(!registros.length)return mostrarToast("Sem dados","Nada para exportar.");
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:"portrait"});
+  registros.forEach((registro,indice)=>{
+    if(indice>0)doc.addPage();
+    doc.setFontSize(15);
+    doc.text("Cadastro completo",14,16);
+    doc.setFontSize(9);
+    doc.text(`${registro.protocolo} | ${new Date(registro.dataEnvio).toLocaleString("pt-BR")}`,14,23);
+    let y=29;
+    obterSecoes(registro.dados).forEach(secao=>{
+      doc.setFontSize(11);
+      doc.text(secao.titulo,14,y);
+      y+=4;
+      doc.autoTable({
+        startY:y,theme:"grid",
+        body:secao.itens.map(item=>[item.label,item.valor]),
+        columnStyles:{0:{cellWidth:58,fontStyle:"bold"},1:{cellWidth:124}},
+        styles:{fontSize:8,cellPadding:2.5}
+      });
+      y=doc.lastAutoTable.finalY+8;
+      if(y>260){doc.addPage();y=18}
+    });
+  });
+  doc.save("cadastros_completos_7_dias.pdf");
+});
+
+cepEl.addEventListener("blur",async()=>{
+  const cep=cepEl.value.replace(/\D/g,"");
+  if(cep.length!==8)return;
+  try{
+    const resposta=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const endereco=await resposta.json();
+    if(!endereco.erro){
+      form.elements.endereco.value=endereco.logradouro||"";
+      form.elements.bairro.value=endereco.bairro||"";
+      form.elements.cidade.value=endereco.localidade||"";
+      form.elements.uf.value=endereco.uf||"";
+      atualizarPreview();
+    }
+  }catch(erro){}
+});
+
+window.addEventListener("online",()=>netStatusEl.textContent="● Conectado");
+window.addEventListener("offline",()=>netStatusEl.textContent="● Offline");
+
+restaurarRascunho();
+if(!localStorage.getItem(DRAFT_KEY))resetarFormulario();
 renderizarHistorico();
+atualizarPreview();
 </script>
 </body>
 </html>
