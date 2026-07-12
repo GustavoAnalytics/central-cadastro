@@ -216,7 +216,7 @@ textarea{min-height:100px}
 
       <div id="emailConfigNotice" class="panel" style="margin:0 0 18px;padding:14px;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)">
         <b>Integração pendente</b>
-        <p class="hint" style="margin-bottom:0">Implante o arquivo <strong>Code.gs</strong> como aplicativo da Web no Google Apps Script e cole a URL no campo <strong>GOOGLE_APPS_SCRIPT_URL</strong> deste HTML.</p>
+        <p class="hint" style="margin-bottom:0">O formulário está integrado ao Google Apps Script por envio seguro em segundo plano, sem uso de fetch.</p>
       </div>
 
       <div class="actions">
@@ -260,8 +260,8 @@ textarea{min-height:100px}
    3. Acesso: qualquer pessoa com o link.
    4. Cole abaixo a URL terminada em /exec.
    ========================================================== */
-const GOOGLE_APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwNZ5BQzuX_oDwL1YUEabQ_46edjJm-k6bu-v_IEzC2KTtgCNtNjowoCi9khn7O8vkfRg/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNZ5BQzuX_oDwL1YUEabQ_46edjJm-k6bu-v_IEzC2KTtgCNtNjowoCi9khn7O8vkfRg/exec";
+
 const DRAFT_KEY = "central_cadastros_draft_v2";
 const HISTORY_KEY = "central_cadastros_history_v2";
 const PENDING_KEY = "central_cadastros_pending_v2";
@@ -470,35 +470,99 @@ function obterEnvioPendente(dados) {
   return novo;
 }
 
-async function enviarParaServidor(payload) {
-  const corpo = new URLSearchParams();
-  corpo.set("payload", JSON.stringify(payload));
+function obterIframeResposta() {
+  let iframe = document.getElementById("appsScriptReceiver");
 
-  const resposta = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-    },
-    body: corpo.toString(),
-    redirect: "follow"
+  if (!iframe) {
+    iframe = document.createElement("iframe");
+    iframe.id = "appsScriptReceiver";
+    iframe.name = "appsScriptReceiver";
+    iframe.title = "Retorno do servidor";
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+  }
+
+  return iframe;
+}
+
+function enviarParaServidor(payload) {
+  return new Promise((resolve, reject) => {
+    const iframe = obterIframeResposta();
+    const formularioEnvio = document.createElement("form");
+    const campoPayload = document.createElement("input");
+
+    formularioEnvio.method = "POST";
+    formularioEnvio.action = GOOGLE_APPS_SCRIPT_URL;
+    formularioEnvio.target = iframe.name;
+    formularioEnvio.style.display = "none";
+    formularioEnvio.acceptCharset = "UTF-8";
+
+    campoPayload.type = "hidden";
+    campoPayload.name = "payload";
+    campoPayload.value = JSON.stringify(payload);
+
+    formularioEnvio.appendChild(campoPayload);
+    document.body.appendChild(formularioEnvio);
+
+    let finalizado = false;
+
+    const limpar = () => {
+      window.removeEventListener("message", receberResposta);
+      clearTimeout(temporizador);
+      formularioEnvio.remove();
+    };
+
+    const concluir = (callback, valor) => {
+      if (finalizado) return;
+      finalizado = true;
+      limpar();
+      callback(valor);
+    };
+
+    const receberResposta = evento => {
+      const retorno = evento.data;
+
+      if (!retorno || retorno.source !== "central-cadastros-apps-script") {
+        return;
+      }
+
+      if (retorno.request_id !== payload.request_id) {
+        return;
+      }
+
+      if (!retorno.ok) {
+        concluir(
+          reject,
+          new Error(retorno.error || "Não foi possível registrar a solicitação.")
+        );
+        return;
+      }
+
+      concluir(resolve, retorno);
+    };
+
+    const temporizador = setTimeout(() => {
+      concluir(
+        reject,
+        new Error(
+          "O servidor não confirmou o envio. Verifique se a implantação contém " +
+          "as funções doGet e doPost e se uma nova versão foi publicada."
+        )
+      );
+    }, 45000);
+
+    window.addEventListener("message", receberResposta);
+
+    try {
+      formularioEnvio.submit();
+    } catch (erro) {
+      concluir(
+        reject,
+        new Error("Não foi possível iniciar o envio ao Google Apps Script.")
+      );
+    }
   });
-
-  const texto = await resposta.text();
-  let retorno;
-
-  try {
-    retorno = JSON.parse(texto);
-  } catch (erro) {
-    throw new Error(
-      "O servidor respondeu em formato inválido. Verifique a implantação do Apps Script."
-    );
-  }
-
-  if (!resposta.ok || !retorno.ok) {
-    throw new Error(retorno.error || "Não foi possível registrar a solicitação.");
-  }
-
-  return retorno;
 }
 
 function obterHistorico() {
