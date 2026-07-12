@@ -100,7 +100,7 @@ textarea{min-height:100px}
             <label>Sistema *</label>
             <select name="sistema" id="sistema" required>
               <option value="">Selecione...</option>
-              <option value="Sankhya">Sankhya</option>
+              <option value="Sankhya" selected>Sankhya</option>
               <option value="Sienge">Sienge</option>
             </select>
           </div>
@@ -137,7 +137,7 @@ textarea{min-height:100px}
         </div>
       </fieldset>
 
-      <div id="sankhyaArea" class="hidden">
+      <div id="sankhyaArea">
         <div class="types">
           <div class="type active" data-type="Parceiro"><b>Parceiro</b><div class="hint">Fornecedor, cliente ou prestador</div></div>
           <div class="type" data-type="Produto"><b>Produto</b><div class="hint">Materiais e itens de estoque</div></div>
@@ -147,7 +147,7 @@ textarea{min-height:100px}
 
       <input type="hidden" name="tipoCadastro" id="tipoCadastro" value="Parceiro">
 
-      <fieldset id="parceiro" class="hidden">
+      <fieldset id="parceiro">
         <legend>2. Parceiro — Sankhya</legend>
         <div class="row">
           <div class="c4"><label>Tipo de pessoa</label><select name="tipoPessoa"><option>Pessoa Jurídica</option><option>Pessoa Física</option><option>Estrangeiro</option></select></div>
@@ -216,8 +216,8 @@ textarea{min-height:100px}
 
 
       <div id="emailConfigNotice" class="panel" style="margin:0 0 18px;padding:14px;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)">
-        <b>Configuração de e-mail necessária</b>
-        <p class="hint" style="margin-bottom:0">O envio só funcionará depois de preencher a Public Key, o Service ID e o Template ID do EmailJS no final do arquivo HTML.</p>
+        <b>Envio de e-mail configurado</b>
+        <p class="hint" style="margin-bottom:0">O portal está configurado para enviar as solicitações pelo EmailJS.</p>
       </div>
 
       <div class="actions">
@@ -257,11 +257,11 @@ textarea{min-height:100px}
    CONFIGURAÇÃO EMAILJS
    Substitua os três valores abaixo pelos dados da sua conta.
    ========================================================== */
-const EMAILJS_SERVICE_ID = service_lp49wrl;
+const EMAILJS_SERVICE_ID = "service_lp49wrl";
 
-const EMAILJS_TEMPLATE_ID = template_trrn5ii;
+const EMAILJS_TEMPLATE_ID = "template_trrn5ii";
 
-const EMAILJS_PUBLIC_KEY = YjWpkl92AA_eOg1s1;
+const EMAILJS_PUBLIC_KEY = "YjWpkl92AA_eOg1s1";
 
 const EMAIL_AMANDA = "amanda.felisberto@areaincrivel.com.br";
 const EMAIL_LISANDRA = "lisandra.ferreira@grupomngt.com.br";
@@ -294,7 +294,7 @@ const EMAILJS_CONFIGURADO =
   !EMAILJS_TEMPLATE_ID.includes("COLE_");
 
 if (typeof emailjs !== "undefined" && EMAILJS_CONFIGURADO) {
-  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  emailjs.init(EMAILJS_PUBLIC_KEY);
 }
 
 function mostrarToast(titulo,mensagem){
@@ -351,7 +351,7 @@ limparBtn.addEventListener("click",()=>{
   if(confirm("Deseja limpar o rascunho?")){
     localStorage.removeItem(DRAFT_KEY);
     form.reset();
-    sankhyaArea.classList.add("hidden");
+    sankhyaAreaEl.classList.add("hidden");
     parceiroEl.classList.add("hidden");
     produtoEl.classList.add("hidden");
     servicoEl.classList.add("hidden");
@@ -555,6 +555,11 @@ const avisoConfig = document.getElementById("emailConfigNotice");
 if (EMAILJS_CONFIGURADO && avisoConfig) avisoConfig.classList.add("hidden");
 
 restaurarRascunho();
+if (!localStorage.getItem(DRAFT_KEY)) {
+  sistemaEl.value = "Sankhya";
+  sistemaEl.dispatchEvent(new Event("change"));
+  setType("Parceiro");
+}
 renderizarHistorico();
 </script>
 </body>
