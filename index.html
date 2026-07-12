@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Central de Cadastros | Sankhya e Sienge</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
@@ -68,7 +67,7 @@ textarea{min-height:100px}
     <div class="logo">CF</div>
     <div>
       <h1>Central Corporativa de Cadastros</h1>
-      <p class="subtitle">Solicitações de cadastro para Sankhya e Sienge, com envio direto por e-mail.</p>
+      <p class="subtitle">Solicitações de cadastro para Sankhya e Sienge, com registro único e comunicação automatizada.</p>
     </div>
   </div>
   <div id="netStatus">● Conectado</div>
@@ -78,15 +77,15 @@ textarea{min-height:100px}
   <div class="grid2">
     <div class="panel">
       <h2>Solicitação centralizada</h2>
-      <p class="subtitle">Preencha os dados e a solicitação será enviada automaticamente ao responsável correto e também ao Gustavo.</p>
+      <p class="subtitle">Cada solicitação é registrada uma única vez. Gustavo recebe o cadastro imediatamente e os responsáveis recebem um resumo consolidado a cada dois dias.</p>
     </div>
     <div class="panel">
-      <b>Encaminhamento automático</b>
+      <b>Fluxo de comunicação</b>
       <p class="hint">
-        Sienge → Amanda Felisberto<br>
-        Sankhya / Área Incrível → Amanda Felisberto<br>
-        Sankhya / A10 e M2LOG → Lisandra Ferreira<br>
-        Cópia de todas as solicitações → Gustavo Farias
+        Cada novo cadastro → Gustavo Farias imediatamente<br>
+        Resumo de Sienge e Sankhya / Área Incrível → Amanda, a cada 2 dias<br>
+        Resumo de Sankhya / A10 e M2LOG → Lisandra, a cada 2 dias<br>
+        Proteção contra clique duplo e reenvio duplicado
       </p>
     </div>
   </div>
@@ -216,8 +215,8 @@ textarea{min-height:100px}
 
 
       <div id="emailConfigNotice" class="panel" style="margin:0 0 18px;padding:14px;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)">
-        <b>Envio de e-mail configurado</b>
-        <p class="hint" style="margin-bottom:0">O portal está configurado para enviar as solicitações pelo EmailJS.</p>
+        <b>Integração pendente</b>
+        <p class="hint" style="margin-bottom:0">Implante o arquivo <strong>Code.gs</strong> como aplicativo da Web no Google Apps Script e cole a URL no campo <strong>GOOGLE_APPS_SCRIPT_URL</strong> deste HTML.</p>
       </div>
 
       <div class="actions">
@@ -254,21 +253,19 @@ textarea{min-height:100px}
 
 <script>
 /* ==========================================================
-   CONFIGURAÇÃO EMAILJS
-   Substitua os três valores abaixo pelos dados da sua conta.
+   BACKEND GOOGLE APPS SCRIPT
+
+   1. Implante o arquivo Code.gs como "Aplicativo da Web".
+   2. Execute como: você.
+   3. Acesso: qualquer pessoa com o link.
+   4. Cole abaixo a URL terminada em /exec.
    ========================================================== */
-const EMAILJS_SERVICE_ID = "service_lp49wrl";
+const GOOGLE_APPS_SCRIPT_URL = "COLE_AQUI_A_URL_DO_WEB_APP";
 
-const EMAILJS_TEMPLATE_ID = "template_trrn5ii";
+const DRAFT_KEY = "central_cadastros_draft_v2";
+const HISTORY_KEY = "central_cadastros_history_v2";
+const PENDING_KEY = "central_cadastros_pending_v2";
 
-const EMAILJS_PUBLIC_KEY = "YjWpkl92AA_eOg1s1";
-
-const EMAIL_AMANDA = "amanda.felisberto@areaincrivel.com.br";
-const EMAIL_LISANDRA = "lisandra.ferreira@grupomngt.com.br";
-const EMAIL_GUSTAVO = "gustavo.farias@areaincrivel.com.br";
-
-const DRAFT_KEY = "central_cadastros_email_draft_v1";
-const HISTORY_KEY = "central_cadastros_email_history_v1";
 const form = document.getElementById("cadastroForm");
 const toastBox = document.getElementById("toast");
 const toastTituloEl = document.getElementById("toastTitulo");
@@ -287,279 +284,453 @@ const pdfBtn = document.getElementById("pdf");
 const cepEl = document.getElementById("cep");
 const historicoBodyEl = document.getElementById("historicoBody");
 const netStatusEl = document.getElementById("netStatus");
+const submitBtn = form.querySelector('button[type="submit"]');
 
-const EMAILJS_CONFIGURADO =
-  !EMAILJS_PUBLIC_KEY.includes("COLE_") &&
-  !EMAILJS_SERVICE_ID.includes("COLE_") &&
-  !EMAILJS_TEMPLATE_ID.includes("COLE_");
+const BACKEND_CONFIGURADO =
+  /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/.test(
+    GOOGLE_APPS_SCRIPT_URL.trim()
+  );
 
-if (typeof emailjs !== "undefined" && EMAILJS_CONFIGURADO) {
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-}
+let envioEmAndamento = false;
+let toastTimer = null;
 
-function mostrarToast(titulo,mensagem){
+function mostrarToast(titulo, mensagem) {
   toastTituloEl.textContent = titulo;
   toastMensagemEl.textContent = mensagem;
   toastBox.classList.add("show");
-  setTimeout(() => toastBox.classList.remove("show"), 5000);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastBox.classList.remove("show"), 5000);
 }
 
-function dadosForm(){ return Object.fromEntries(new FormData(form).entries()); }
-
-function setType(tipo){
-  tipoCadastroEl.value=tipo;
-  document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x.dataset.type===tipo));
-  parceiroEl.classList.toggle("hidden",tipo!=="Parceiro");
-  produtoEl.classList.toggle("hidden",tipo!=="Produto");
-  servicoEl.classList.toggle("hidden",tipo!=="Serviço");
+function dadosForm() {
+  return Object.fromEntries(new FormData(form).entries());
 }
 
-document.querySelectorAll(".type").forEach(x=>x.onclick=()=>setType(x.dataset.type));
+function setType(tipo) {
+  tipoCadastroEl.value = tipo;
+  document.querySelectorAll(".type").forEach(x =>
+    x.classList.toggle("active", x.dataset.type === tipo)
+  );
+  parceiroEl.classList.toggle("hidden", tipo !== "Parceiro");
+  produtoEl.classList.toggle("hidden", tipo !== "Produto");
+  servicoEl.classList.toggle("hidden", tipo !== "Serviço");
+}
 
-sistemaEl.addEventListener("change", ()=>{
-  const s=sistemaEl.value;
-  sankhyaAreaEl.classList.toggle("hidden",s!=="Sankhya");
-  insumoEl.classList.toggle("hidden",s!=="Sienge");
+document.querySelectorAll(".type").forEach(x => {
+  x.onclick = () => setType(x.dataset.type);
+});
 
-  if(s==="Sankhya") setType("Parceiro");
-  else if(s==="Sienge"){
+sistemaEl.addEventListener("change", () => {
+  const sistema = sistemaEl.value;
+  sankhyaAreaEl.classList.toggle("hidden", sistema !== "Sankhya");
+  insumoEl.classList.toggle("hidden", sistema !== "Sienge");
+
+  if (sistema === "Sankhya") {
+    setType("Parceiro");
+  } else if (sistema === "Sienge") {
     parceiroEl.classList.add("hidden");
     produtoEl.classList.add("hidden");
     servicoEl.classList.add("hidden");
-    tipoCadastroEl.value="Insumo";
-  }else{
+    tipoCadastroEl.value = "Insumo";
+  } else {
     parceiroEl.classList.add("hidden");
     produtoEl.classList.add("hidden");
     servicoEl.classList.add("hidden");
     insumoEl.classList.add("hidden");
   }
+
   salvarRascunho();
 });
 
-function salvarRascunho(){
-  localStorage.setItem(DRAFT_KEY,JSON.stringify(dadosForm()));
+function salvarRascunho() {
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(dadosForm()));
 }
 
-form.addEventListener("input",()=>{
+form.addEventListener("input", () => {
   clearTimeout(window.rascunhoTimer);
-  window.rascunhoTimer=setTimeout(salvarRascunho,350);
+  window.rascunhoTimer = setTimeout(salvarRascunho, 350);
 });
 
-salvarBtn.addEventListener("click",()=>{ salvarRascunho(); mostrarToast("Rascunho salvo","Os dados foram salvos neste navegador."); });
-
-limparBtn.addEventListener("click",()=>{
-  if(confirm("Deseja limpar o rascunho?")){
-    localStorage.removeItem(DRAFT_KEY);
-    form.reset();
-    sankhyaAreaEl.classList.add("hidden");
-    parceiroEl.classList.add("hidden");
-    produtoEl.classList.add("hidden");
-    servicoEl.classList.add("hidden");
-    insumoEl.classList.add("hidden");
-    tipoCadastroEl.value="Parceiro";
-  }
+salvarBtn.addEventListener("click", () => {
+  salvarRascunho();
+  mostrarToast("Rascunho salvo", "Os dados foram salvos neste navegador.");
 });
 
-function restaurarRascunho(){
-  try{
-    const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");
-    if(!d)return;
-    Object.entries(d).forEach(([k,v])=>{ if(form.elements[k]) form.elements[k].value=v; });
+limparBtn.addEventListener("click", () => {
+  if (!confirm("Deseja limpar o rascunho?")) return;
+
+  localStorage.removeItem(DRAFT_KEY);
+  sessionStorage.removeItem(PENDING_KEY);
+  form.reset();
+  sistemaEl.value = "Sankhya";
+  sistemaEl.dispatchEvent(new Event("change"));
+  setType("Parceiro");
+});
+
+function restaurarRascunho() {
+  try {
+    const dados = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+    if (!dados) return;
+
+    Object.entries(dados).forEach(([campo, valor]) => {
+      if (form.elements[campo]) form.elements[campo].value = valor;
+    });
+
     sistemaEl.dispatchEvent(new Event("change"));
-    if(d.sistema==="Sankhya") setType(d.tipoCadastro||"Parceiro");
-  }catch(e){}
+
+    if (dados.sistema === "Sankhya") {
+      setType(dados.tipoCadastro || "Parceiro");
+    }
+  } catch (erro) {
+    console.warn("Não foi possível restaurar o rascunho.", erro);
+  }
 }
 
-function destinoResponsavel(d){
-  if(d.sistema==="Sienge") return {nome:"Amanda Felisberto",email:EMAIL_AMANDA};
-  if(d.sistema==="Sankhya" && d.empresa==="Área Incrível") return {nome:"Amanda Felisberto",email:EMAIL_AMANDA};
-  if(d.sistema==="Sankhya" && (d.empresa==="A10" || d.empresa==="M2LOG")) return {nome:"Lisandra Ferreira",email:EMAIL_LISANDRA};
+function destinoResponsavel(dados) {
+  if (dados.sistema === "Sienge") {
+    return { nome: "Amanda Felisberto", grupo: "AMANDA" };
+  }
+
+  if (dados.sistema === "Sankhya" && dados.empresa === "Área Incrível") {
+    return { nome: "Amanda Felisberto", grupo: "AMANDA" };
+  }
+
+  if (
+    dados.sistema === "Sankhya" &&
+    (dados.empresa === "A10" || dados.empresa === "M2LOG")
+  ) {
+    return { nome: "Lisandra Ferreira", grupo: "LISANDRA" };
+  }
+
   throw new Error("Não existe responsável configurado para essa combinação.");
 }
 
-function descricaoCadastro(d){
-  if(d.tipoCadastro==="Parceiro") return d.razaoSocial||d.nomeFantasia||d.cnpjCpf||"";
-  if(d.tipoCadastro==="Produto") return d.descricaoProduto||d.grupoProduto||"";
-  if(d.tipoCadastro==="Serviço") return d.descricaoServico||d.grupoServico||"";
-  return d.descricaoInsumo||d.grupoInsumo||"";
+function descricaoCadastro(dados) {
+  if (dados.tipoCadastro === "Parceiro") {
+    return dados.razaoSocial || dados.nomeFantasia || dados.cnpjCpf || "";
+  }
+
+  if (dados.tipoCadastro === "Produto") {
+    return dados.descricaoProduto || dados.grupoProduto || "";
+  }
+
+  if (dados.tipoCadastro === "Serviço") {
+    return dados.descricaoServico || dados.grupoServico || "";
+  }
+
+  return dados.descricaoInsumo || dados.grupoInsumo || "";
 }
 
-function gerarTabelaEmail(d,protocolo,responsavel){
-  const linhas=[
-    ["Protocolo",protocolo],
-    ["Sistema",d.sistema],
-    ["Empresa",d.empresa],
-    ["Tipo de cadastro",d.tipoCadastro],
-    ["Cadastro solicitado",descricaoCadastro(d)],
-    ["Solicitante",d.solicitante],
-    ["E-mail do solicitante",d.emailSolicitante],
-    ["Departamento",d.departamento||"Não informado"],
-    ["Prioridade",d.prioridade],
-    ["Responsável",responsavel.nome],
-    ["Observações",d.observacoes||"Não informado"],
-    ["Anexo",d.linkAnexo||"Não informado"]
-  ];
-  return linhas.map(([a,b])=>`${a}: ${b}`).join("\n");
+function gerarProtocolo() {
+  const agora = new Date();
+  const data = agora.toISOString().slice(0, 10).replaceAll("-", "");
+  const sequencia = String(agora.getTime()).slice(-7);
+  return `CAD-${data}-${sequencia}`;
 }
 
-async function enviarEmail(toEmail,toName,d,protocolo,responsavel){
-  if (typeof emailjs === "undefined") {
-    throw new Error("A biblioteca EmailJS não foi carregada. Verifique sua conexão com a internet.");
+function gerarRequestId() {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+  return `REQ-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function gerarFingerprint(dados) {
+  return JSON.stringify({
+    sistema: dados.sistema,
+    empresa: dados.empresa,
+    tipoCadastro: dados.tipoCadastro,
+    cadastro: descricaoCadastro(dados).trim().toLowerCase(),
+    solicitante: (dados.solicitante || "").trim().toLowerCase(),
+    email: (dados.emailSolicitante || "").trim().toLowerCase()
+  });
+}
+
+function obterEnvioPendente(dados) {
+  const fingerprint = gerarFingerprint(dados);
+
+  try {
+    const existente = JSON.parse(sessionStorage.getItem(PENDING_KEY) || "null");
+    const aindaValido =
+      existente &&
+      existente.fingerprint === fingerprint &&
+      Date.now() - existente.criadoEm < 30 * 60 * 1000;
+
+    if (aindaValido) return existente;
+  } catch (erro) {
+    console.warn("Não foi possível recuperar o identificador do envio.", erro);
   }
-  if (!EMAILJS_CONFIGURADO) {
-    throw new Error("EmailJS não configurado. Informe Public Key, Service ID e Template ID.");
-  }
-  const params={
-    to_email:toEmail,
-    to_name:toName,
-    subject:`[Central de Cadastros] ${protocolo} — ${d.sistema} / ${d.empresa} / ${d.tipoCadastro}`,
-    protocolo,
-    sistema:d.sistema,
-    empresa:d.empresa,
-    tipo_cadastro:d.tipoCadastro,
-    cadastro_solicitado:descricaoCadastro(d),
-    solicitante:d.solicitante,
-    email_solicitante:d.emailSolicitante,
-    departamento:d.departamento||"Não informado",
-    prioridade:d.prioridade,
-    responsavel:responsavel.nome,
-    observacoes:d.observacoes||"Não informado",
-    link_anexo:d.linkAnexo||"Não informado",
-    message:gerarTabelaEmail(d,protocolo,responsavel)
+
+  const novo = {
+    requestId: gerarRequestId(),
+    protocolo: gerarProtocolo(),
+    fingerprint,
+    criadoEm: Date.now()
   };
-  return emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,params);
+
+  sessionStorage.setItem(PENDING_KEY, JSON.stringify(novo));
+  return novo;
 }
 
-function obterHistorico(){
-  let arr=[];
-  try{arr=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch(e){}
-  const limite=Date.now()-7*86400000;
-  arr=arr.filter(x=>new Date(x.dataEnvio).getTime()>=limite);
-  localStorage.setItem(HISTORY_KEY,JSON.stringify(arr));
-  return arr;
+async function enviarParaServidor(payload) {
+  const corpo = new URLSearchParams();
+  corpo.set("payload", JSON.stringify(payload));
+
+  const resposta = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    body: corpo.toString(),
+    redirect: "follow"
+  });
+
+  const texto = await resposta.text();
+  let retorno;
+
+  try {
+    retorno = JSON.parse(texto);
+  } catch (erro) {
+    throw new Error(
+      "O servidor respondeu em formato inválido. Verifique a implantação do Apps Script."
+    );
+  }
+
+  if (!resposta.ok || !retorno.ok) {
+    throw new Error(retorno.error || "Não foi possível registrar a solicitação.");
+  }
+
+  return retorno;
 }
 
-function registrarHistorico(d,protocolo){
-  const arr=obterHistorico();
-  arr.unshift({dataEnvio:new Date().toISOString(),protocolo,dados:d});
-  localStorage.setItem(HISTORY_KEY,JSON.stringify(arr));
+function obterHistorico() {
+  let registros = [];
+
+  try {
+    registros = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+  } catch (erro) {
+    console.warn("Histórico local inválido.", erro);
+  }
+
+  const limite = Date.now() - 7 * 86400000;
+  registros = registros.filter(
+    item => new Date(item.dataEnvio).getTime() >= limite
+  );
+
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(registros));
+  return registros;
+}
+
+function registrarHistorico(dados, protocolo) {
+  const registros = obterHistorico();
+
+  if (registros.some(item => item.protocolo === protocolo)) {
+    renderizarHistorico();
+    return;
+  }
+
+  registros.unshift({
+    dataEnvio: new Date().toISOString(),
+    protocolo,
+    dados
+  });
+
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(registros));
   renderizarHistorico();
 }
 
-function renderizarHistorico(){
-  historicoBodyEl.innerHTML=obterHistorico().map(x=>`<tr>
-    <td>${new Date(x.dataEnvio).toLocaleString("pt-BR")}</td>
-    <td>${x.protocolo}</td>
-    <td>${x.dados.sistema}</td>
-    <td>${x.dados.empresa}</td>
-    <td>${x.dados.tipoCadastro}</td>
-    <td>${descricaoCadastro(x.dados)}</td>
-  </tr>`).join("");
+function escaparHtml(valor) {
+  return String(valor ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-form.onsubmit=async e=>{
-  e.preventDefault();
-  const d=dadosForm();
-  const principal=form.querySelector(`[data-required="${d.tipoCadastro}"]`);
+function renderizarHistorico() {
+  historicoBodyEl.innerHTML = obterHistorico()
+    .map(item => `<tr>
+      <td>${escaparHtml(new Date(item.dataEnvio).toLocaleString("pt-BR"))}</td>
+      <td>${escaparHtml(item.protocolo)}</td>
+      <td>${escaparHtml(item.dados.sistema)}</td>
+      <td>${escaparHtml(item.dados.empresa)}</td>
+      <td>${escaparHtml(item.dados.tipoCadastro)}</td>
+      <td>${escaparHtml(descricaoCadastro(item.dados))}</td>
+    </tr>`)
+    .join("");
+}
 
-  if(principal && !principal.value.trim()){
-    principal.focus();
-    return mostrarToast("Campo obrigatório","Preencha o campo principal do cadastro.");
+form.addEventListener("submit", async evento => {
+  evento.preventDefault();
+
+  if (envioEmAndamento) {
+    mostrarToast(
+      "Envio em andamento",
+      "A solicitação já está sendo processada. Não é necessário clicar novamente."
+    );
+    return;
   }
 
-  if (!EMAILJS_CONFIGURADO) {
-    return mostrarToast("EmailJS não configurado","Preencha Public Key, Service ID e Template ID no código antes de publicar.");
+  const dados = dadosForm();
+  const campoPrincipal = form.querySelector(
+    `[data-required="${dados.tipoCadastro}"]`
+  );
+
+  if (campoPrincipal && !campoPrincipal.value.trim()) {
+    campoPrincipal.focus();
+    mostrarToast(
+      "Campo obrigatório",
+      "Preencha o campo principal do cadastro."
+    );
+    return;
   }
 
-  const btn=e.submitter;
-  btn.disabled=true;
-  btn.textContent="Enviando...";
+  if (!BACKEND_CONFIGURADO) {
+    mostrarToast(
+      "Integração não configurada",
+      "Cole a URL do aplicativo da Web do Google Apps Script no código."
+    );
+    return;
+  }
 
-  try{
-    const responsavel=destinoResponsavel(d);
-    const protocolo=`CAD-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
+  const botao = evento.submitter || submitBtn;
+  envioEmAndamento = true;
+  botao.disabled = true;
+  botao.textContent = "Enviando...";
 
-    await enviarEmail(responsavel.email,responsavel.nome,d,protocolo,responsavel);
-    await enviarEmail(EMAIL_GUSTAVO,"Gustavo Farias",d,protocolo,responsavel);
+  try {
+    const responsavel = destinoResponsavel(dados);
+    const envioPendente = obterEnvioPendente(dados);
 
-    registrarHistorico(d,protocolo);
+    const payload = {
+      ...dados,
+      request_id: envioPendente.requestId,
+      protocolo: envioPendente.protocolo,
+      data_cliente: new Date().toISOString(),
+      cadastro_solicitado: descricaoCadastro(dados),
+      responsavel_nome: responsavel.nome,
+      responsavel_grupo: responsavel.grupo
+    };
+
+    const retorno = await enviarParaServidor(payload);
+    const protocolo = retorno.protocolo || envioPendente.protocolo;
+
+    registrarHistorico(dados, protocolo);
     localStorage.removeItem(DRAFT_KEY);
+    sessionStorage.removeItem(PENDING_KEY);
+
     form.reset();
+    sistemaEl.value = "Sankhya";
     sistemaEl.dispatchEvent(new Event("change"));
+    setType("Parceiro");
 
-    mostrarToast("Solicitação enviada",`Protocolo: ${protocolo}`);
-  }catch(err){
+    mostrarToast(
+      retorno.duplicado ? "Solicitação já registrada" : "Solicitação enviada",
+      retorno.duplicado
+        ? `O cadastro já existia e não foi enviado novamente. Protocolo: ${protocolo}`
+        : `Gustavo recebeu o cadastro. Protocolo: ${protocolo}`
+    );
+  } catch (erro) {
     salvarRascunho();
-    mostrarToast("Falha no envio",err?.text||err?.message||"Não foi possível enviar o e-mail.");
-  }finally{
-    btn.disabled=false;
-    btn.textContent="Enviar solicitação";
+    mostrarToast(
+      "Falha no envio",
+      erro?.message || "Não foi possível registrar a solicitação."
+    );
+  } finally {
+    envioEmAndamento = false;
+    botao.disabled = false;
+    botao.textContent = "Enviar solicitação";
   }
-};
-
-excelBtn.addEventListener("click",()=>{
-  const rows=obterHistorico().map(x=>({
-    Data:new Date(x.dataEnvio).toLocaleString("pt-BR"),
-    Protocolo:x.protocolo,
-    Sistema:x.dados.sistema,
-    Empresa:x.dados.empresa,
-    Tipo:x.dados.tipoCadastro,
-    Cadastro:descricaoCadastro(x.dados),
-    Solicitante:x.dados.solicitante,
-    Prioridade:x.dados.prioridade
-  }));
-  if(!rows.length)return mostrarToast("Sem dados","Nada para exportar.");
-  const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Cadastros");
-  XLSX.writeFile(wb,"cadastros_7_dias.xlsx");
 });
 
-pdfBtn.addEventListener("click",()=>{
-  const rows=obterHistorico();
-  if(!rows.length)return mostrarToast("Sem dados","Nada para exportar.");
-  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:"landscape"});
-  doc.text("Cadastros dos últimos 7 dias",14,16);
-  doc.autoTable({
-    startY:22,
-    head:[["Data","Protocolo","Sistema","Empresa","Tipo","Cadastro"]],
-    body:rows.map(x=>[
-      new Date(x.dataEnvio).toLocaleString("pt-BR"),
-      x.protocolo,
-      x.dados.sistema,
-      x.dados.empresa,
-      x.dados.tipoCadastro,
-      descricaoCadastro(x.dados)
+excelBtn.addEventListener("click", () => {
+  const linhas = obterHistorico().map(item => ({
+    Data: new Date(item.dataEnvio).toLocaleString("pt-BR"),
+    Protocolo: item.protocolo,
+    Sistema: item.dados.sistema,
+    Empresa: item.dados.empresa,
+    Tipo: item.dados.tipoCadastro,
+    Cadastro: descricaoCadastro(item.dados),
+    Solicitante: item.dados.solicitante,
+    Prioridade: item.dados.prioridade
+  }));
+
+  if (!linhas.length) {
+    mostrarToast("Sem dados", "Nada para exportar.");
+    return;
+  }
+
+  const planilha = XLSX.utils.json_to_sheet(linhas);
+  const arquivo = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(arquivo, planilha, "Cadastros");
+  XLSX.writeFile(arquivo, "cadastros_7_dias.xlsx");
+});
+
+pdfBtn.addEventListener("click", () => {
+  const registros = obterHistorico();
+
+  if (!registros.length) {
+    mostrarToast("Sem dados", "Nada para exportar.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const documento = new jsPDF({ orientation: "landscape" });
+
+  documento.text("Cadastros dos últimos 7 dias", 14, 16);
+  documento.autoTable({
+    startY: 22,
+    head: [["Data", "Protocolo", "Sistema", "Empresa", "Tipo", "Cadastro"]],
+    body: registros.map(item => [
+      new Date(item.dataEnvio).toLocaleString("pt-BR"),
+      item.protocolo,
+      item.dados.sistema,
+      item.dados.empresa,
+      item.dados.tipoCadastro,
+      descricaoCadastro(item.dados)
     ])
   });
-  doc.save("cadastros_7_dias.pdf");
+
+  documento.save("cadastros_7_dias.pdf");
 });
 
-cepEl.addEventListener("blur",async()=>{
-  const c=cepEl.value.replace(/\D/g,"");
-  if(c.length!==8)return;
-  try{
-    const j=await(await fetch(`https://viacep.com.br/ws/${c}/json/`)).json();
-    if(!j.erro){
-      form.elements.endereco.value=j.logradouro||"";
-      form.elements.bairro.value=j.bairro||"";
-      form.elements.cidade.value=j.localidade||"";
-      form.elements.uf.value=j.uf||"";
+cepEl.addEventListener("blur", async () => {
+  const cep = cepEl.value.replace(/\D/g, "");
+  if (cep.length !== 8) return;
+
+  try {
+    const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const endereco = await resposta.json();
+
+    if (!endereco.erro) {
+      form.elements.endereco.value = endereco.logradouro || "";
+      form.elements.bairro.value = endereco.bairro || "";
+      form.elements.cidade.value = endereco.localidade || "";
+      form.elements.uf.value = endereco.uf || "";
     }
-  }catch(e){}
+  } catch (erro) {
+    console.warn("Não foi possível consultar o CEP.", erro);
+  }
 });
 
-window.addEventListener("online",()=>netStatusEl.textContent="● Conectado");
-window.addEventListener("offline",()=>netStatusEl.textContent="● Offline");
+window.addEventListener("online", () => {
+  netStatusEl.textContent = "● Conectado";
+});
+
+window.addEventListener("offline", () => {
+  netStatusEl.textContent = "● Offline";
+});
 
 const avisoConfig = document.getElementById("emailConfigNotice");
-if (EMAILJS_CONFIGURADO && avisoConfig) avisoConfig.classList.add("hidden");
+if (BACKEND_CONFIGURADO && avisoConfig) avisoConfig.classList.add("hidden");
 
 restaurarRascunho();
+
 if (!localStorage.getItem(DRAFT_KEY)) {
   sistemaEl.value = "Sankhya";
   sistemaEl.dispatchEvent(new Event("change"));
   setType("Parceiro");
 }
+
 renderizarHistorico();
 </script>
 </body>
